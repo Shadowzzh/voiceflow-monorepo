@@ -23,8 +23,7 @@ for (const t of assetTargets) {
         return !/[\\/]_$/.test(src)
       },
     })
-  }
-  else {
+  } else {
     await fs.copy(from, to)
   }
 

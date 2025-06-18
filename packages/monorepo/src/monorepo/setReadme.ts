@@ -1,6 +1,6 @@
-import type { Context } from './context'
 import fs from 'fs-extra'
 import path from 'pathe'
+import type { Context } from './context'
 
 async function getRows(ctx: Context) {
   const { projects, git, cwd } = ctx
@@ -14,7 +14,9 @@ async function getRows(ctx: Context) {
   for (const project of projects) {
     const p = path.relative(cwd, project.rootDirRealPath)
     if (p) {
-      const description = project.manifest.description ? `- ${project.manifest.description}` : ''
+      const description = project.manifest.description
+        ? `- ${project.manifest.description}`
+        : ''
       rows.push(`- [${project.manifest.name}](${p}) ${description}`)
     }
   }
@@ -23,7 +25,9 @@ async function getRows(ctx: Context) {
   if (gitUrl) {
     // ## Contributing
     rows.push('\n## Contributing\n')
-    rows.push('Contributions Welcome! You can contribute in the following ways.')
+    rows.push(
+      'Contributions Welcome! You can contribute in the following ways.'
+    )
     rows.push('')
     rows.push('- Create an Issue - Propose a new feature. Report a bug.')
     rows.push('- Pull Request - Fix a bug and typo. Refactor the code.')
@@ -34,7 +38,9 @@ async function getRows(ctx: Context) {
     rows.push('For more details, see [CONTRIBUTING.md](CONTRIBUTING.md).')
     // ## Contributors
     rows.push('\n## Contributors\n')
-    rows.push(`Thanks to [all contributors](https://github.com/${gitUrl.full_name}/graphs/contributors)!`)
+    rows.push(
+      `Thanks to [all contributors](https://github.com/${gitUrl.full_name}/graphs/contributors)!`
+    )
   }
 
   // ## Authors
@@ -45,7 +51,9 @@ async function getRows(ctx: Context) {
   // ## License
 
   rows.push('\n## License\n')
-  rows.push('Distributed under the MIT License. See [LICENSE](LICENSE) for more information.')
+  rows.push(
+    'Distributed under the MIT License. See [LICENSE](LICENSE) for more information.'
+  )
 
   return rows
 }

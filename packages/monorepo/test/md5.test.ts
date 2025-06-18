@@ -7,53 +7,24 @@ import { getFileHash, isFileChanged } from '@/utils/md5'
 describe.skipIf(CI.isCI)('md5', () => {
   const testFilePath = path.resolve(import.meta.dirname, '../.gitignore')
   it('getFileHash', async () => {
-    expect(
-      getFileHash(await fs.readFile(
-        testFilePath,
-        'binary',
-      )),
-    ).toBeTypeOf('string')
+    expect(getFileHash(await fs.readFile(testFilePath, 'binary'))).toBeTypeOf(
+      'string'
+    )
   })
 
   it('isFileChanged case 0', async () => {
-    const str = await fs.readFile(
-      testFilePath,
-      'utf8',
-    )
-    expect(
-      isFileChanged(
-        str,
-        `${str}\n`,
-      ),
-    ).toBe(true)
+    const str = await fs.readFile(testFilePath, 'utf8')
+    expect(isFileChanged(str, `${str}\n`)).toBe(true)
   })
 
   it('isFileChanged case 1', async () => {
-    const str = await fs.readFile(
-      testFilePath,
-      'utf8',
-    )
-    expect(
-      isFileChanged(
-        str,
-        str,
-      ),
-    ).toBe(false)
+    const str = await fs.readFile(testFilePath, 'utf8')
+    expect(isFileChanged(str, str)).toBe(false)
   })
 
   it('isFileChanged case 2', async () => {
-    const str = await fs.readFile(
-      testFilePath,
-      'utf8',
-    )
-    const strBuf = await fs.readFile(
-      testFilePath,
-    )
-    expect(
-      isFileChanged(
-        str,
-        strBuf,
-      ),
-    ).toBe(false)
+    const str = await fs.readFile(testFilePath, 'utf8')
+    const strBuf = await fs.readFile(testFilePath)
+    expect(isFileChanged(str, strBuf)).toBe(false)
   })
 })

@@ -1,7 +1,7 @@
-import type { ConfigValues, SimpleGit, SimpleGitOptions } from '@/types'
 import get from 'get-value'
 import gitUrlParse from 'git-url-parse'
 import { simpleGit } from 'simple-git'
+import type { ConfigValues, SimpleGit, SimpleGitOptions } from '@/types'
 
 export class GitClient {
   private readonly client: SimpleGit
@@ -23,8 +23,7 @@ export class GitClient {
   async getConfig() {
     if (this.#config) {
       return this.#config
-    }
-    else {
+    } else {
       return await this.init()
     }
   }

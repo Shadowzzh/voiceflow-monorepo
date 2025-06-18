@@ -5,12 +5,10 @@ import { sharedConfig } from './vite.shared.config'
 
 export default mergeConfig(sharedConfig, {
   plugins: [
-    dts(
-      {
-        tsconfigPath: './tsconfig.app.json',
-        entryRoot: './lib',
-      },
-    ),
+    dts({
+      tsconfigPath: './tsconfig.app.json',
+      entryRoot: './lib',
+    }),
   ],
   // https://vite.dev/guide/build.html#library-mode
   build: {

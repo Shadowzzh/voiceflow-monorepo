@@ -9,7 +9,11 @@ export function setMirror(obj: object) {
   const prefix = 'terminal.integrated.env'
   if (typeof obj === 'object' && obj) {
     for (const platform of platforms) {
-      set(obj, [prefix, platform].join('.').replaceAll('.', '\\.'), chinaMirrorsEnvs)
+      set(
+        obj,
+        [prefix, platform].join('.').replaceAll('.', '\\.'),
+        chinaMirrorsEnvs
+      )
     }
   }
 }

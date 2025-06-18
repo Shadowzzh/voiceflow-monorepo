@@ -12,8 +12,7 @@ export function isFileChanged(src: crypto.BinaryLike, dest: crypto.BinaryLike) {
     const currentHash = getFileHash(src)
     const previousHash = getFileHash(dest)
     return currentHash !== previousHash
-  }
-  catch (err) {
+  } catch (err) {
     logger.error('Error calculating file hash:', err)
     return false
   }

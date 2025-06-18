@@ -8,9 +8,17 @@ export async function setVscodeBinaryMirror(cwd: string) {
 
   await fs.ensureFile(targetJsonPath)
 
-  const json = parse(await fs.readFile(targetJsonPath, 'utf8'), undefined, false)
+  const json = parse(
+    await fs.readFile(targetJsonPath, 'utf8'),
+    undefined,
+    false
+  )
 
   json && typeof json === 'object' && setMirror(json)
 
-  await fs.writeFile(targetJsonPath, `${stringify(json, undefined, 2)}\n`, 'utf8')
+  await fs.writeFile(
+    targetJsonPath,
+    `${stringify(json, undefined, 2)}\n`,
+    'utf8'
+  )
 }

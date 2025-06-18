@@ -24,17 +24,25 @@ export interface CreateNewProjectOptions {
 export const defaultTemplate = 'unbuild'
 
 export const fromMap = {
-  'tsup': 'tsup-template',
-  'unbuild': 'unbuild-template',
+  tsup: 'tsup-template',
+  unbuild: 'unbuild-template',
   'vue-lib': 'vue-lib-template',
 }
 
 export async function createNewProject(options?: CreateNewProjectOptions) {
-  const { name: targetName, renameJson, cwd, type } = defu<Required<CreateNewProjectOptions>, CreateNewProjectOptions[]>(options, {
-    cwd: process.cwd(),
-    name: fromMap[defaultTemplate],
-    renameJson: false,
-  })
+  const {
+    name: targetName,
+    renameJson,
+    cwd,
+    type,
+  } = defu<Required<CreateNewProjectOptions>, CreateNewProjectOptions[]>(
+    options,
+    {
+      cwd: process.cwd(),
+      name: fromMap[defaultTemplate],
+      renameJson: false,
+    }
+  )
   const bundlerName = type ?? defaultTemplate
   const from = path.join(templatesDir, fromMap[bundlerName])
   const to = path.join(cwd, targetName)
@@ -45,12 +53,17 @@ export async function createNewProject(options?: CreateNewProjectOptions) {
       const sourceJson = await fs.readJson(sourceJsonPath)
       set(sourceJson, 'version', '0.0.0')
       set(sourceJson, 'name', path.basename(targetName))
-      await fs.outputJson(path.resolve(to, renameJson ? 'package.mock.json' : filename), sourceJson, { spaces: 2 })
-    }
-    else {
+      await fs.outputJson(
+        path.resolve(to, renameJson ? 'package.mock.json' : filename),
+        sourceJson,
+        { spaces: 2 }
+      )
+    } else {
       await fs.copy(path.resolve(from, filename), path.resolve(to, filename))
     }
   }
 
-  logger.success(`${pc.bgGreenBright(pc.white(`[${bundlerName}]`))} ${targetName} 项目创建成功！`)
+  logger.success(
+    `${pc.bgGreenBright(pc.white(`[${bundlerName}]`))} ${targetName} 项目创建成功！`
+  )
 }

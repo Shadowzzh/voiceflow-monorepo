@@ -1,5 +1,5 @@
-import type { PackageJson } from 'pkg-types'
 import get from 'get-value'
+import type { PackageJson } from 'pkg-types'
 import { version } from '@/constants'
 import { setPkgJson } from '@/upgrade'
 
@@ -15,21 +15,20 @@ describe('lib', () => {
   })
 
   it('setPkgJson casae 1', () => {
-    const t = {
-
-    }
+    const t = {}
     const o = {
       scripts: {
-        'build': 'turbo run build',
-        'dev': 'turbo run dev --parallel',
-        'test': 'vitest run --coverage.enabled',
+        build: 'turbo run build',
+        dev: 'turbo run dev --parallel',
+        test: 'vitest run --coverage.enabled',
         'test:dev': 'vitest',
-        'lint': 'turbo run lint',
-        'release': 'changeset',
-        'publish-packages': 'turbo run build lint test && changeset version && changeset publish',
-        'preinstall': 'npx only-allow pnpm',
-        'prepare': 'husky',
-        'commit': 'commit',
+        lint: 'turbo run lint',
+        release: 'changeset',
+        'publish-packages':
+          'turbo run build lint test && changeset version && changeset publish',
+        preinstall: 'npx only-allow pnpm',
+        prepare: 'husky',
+        commit: 'commit',
       },
     }
     setPkgJson(t, o)
@@ -91,7 +90,9 @@ describe('lib', () => {
     }
     setPkgJson(t, o)
     if (o.devDependencies) {
-      expect(get(o.devDependencies, '@icebreakers/monorepo')).toBe(`^${version}`)
+      expect(get(o.devDependencies, '@icebreakers/monorepo')).toBe(
+        `^${version}`
+      )
     }
   })
 })

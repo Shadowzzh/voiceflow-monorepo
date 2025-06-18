@@ -21,7 +21,9 @@ export async function cleanProjects(cwd: string) {
   const name = 'package.json'
   const pkgJson = await fs.readJson(name)
   // fix https://github.com/sonofmagic/monorepo-template/issues/76
-  set(pkgJson, 'devDependencies.@icebreakers/monorepo', 'latest', { preservePaths: false })
+  set(pkgJson, 'devDependencies.@icebreakers/monorepo', 'latest', {
+    preservePaths: false,
+  })
   await fs.outputJson(name, pkgJson, {
     spaces: 2,
   })

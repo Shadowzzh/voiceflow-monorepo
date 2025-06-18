@@ -28,7 +28,15 @@ export function getAssetTargets(raw?: boolean) {
   ]
   if (!raw) {
     // renovate
-    list.push('.github', 'LICENSE', 'renovate.json', 'SECURITY.md', 'CODE_OF_CONDUCT.md', 'CONTRIBUTING.md', 'netlify.toml')
+    list.push(
+      '.github',
+      'LICENSE',
+      'renovate.json',
+      'SECURITY.md',
+      'CODE_OF_CONDUCT.md',
+      'CONTRIBUTING.md',
+      'netlify.toml'
+    )
   }
   return list
 }

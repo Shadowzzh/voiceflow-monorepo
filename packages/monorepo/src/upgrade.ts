@@ -1,5 +1,4 @@
 import type { Buffer } from 'node:buffer'
-import type { CliOpts, PackageJson } from './types'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
 import checkbox from '@inquirer/checkbox'
@@ -17,6 +16,7 @@ import { logger } from './logger'
 import { GitClient } from './monorepo/git'
 import { scriptsEntries } from './scripts'
 import { getAssetTargets } from './targets'
+import type { CliOpts, PackageJson } from './types'
 import { escapeStringRegexp, isFileChanged, isMatch } from './utils'
 
 const queue = new PQueue({ concurrency: 1 })
@@ -34,7 +34,10 @@ function isWorkspace(version?: string) {
   return false
 }
 
-export function setPkgJson(sourcePkgJson: PackageJson, targetPkgJson: PackageJson) {
+export function setPkgJson(
+  sourcePkgJson: PackageJson,
+  targetPkgJson: PackageJson
+) {
   const packageManager = get(sourcePkgJson, 'packageManager', { default: '' })
   const deps = get(sourcePkgJson, 'dependencies', { default: {} })
   const devDeps = get(sourcePkgJson, 'devDependencies', { default: {} })
@@ -45,15 +48,26 @@ export function setPkgJson(sourcePkgJson: PackageJson, targetPkgJson: PackageJso
   set(targetPkgJson, 'packageManager', packageManager)
   Object.entries(deps).forEach((x) => {
     if (!isWorkspace(targetDeps[x[0]])) {
-      set(targetPkgJson, `dependencies.${x[0].replaceAll('.', '\\.')}`, x[1], { preservePaths: false })
+      set(targetPkgJson, `dependencies.${x[0].replaceAll('.', '\\.')}`, x[1], {
+        preservePaths: false,
+      })
     }
   })
   Object.entries(devDeps).forEach((x) => {
     if (x[0] === pkgName) {
-      set(targetPkgJson, `devDependencies.${x[0].replaceAll('.', '\\.')}`, `^${pkgVersion}`, { preservePaths: false })
-    }
-    else if (!isWorkspace(targetDevDeps[x[0]])) {
-      set(targetPkgJson, `devDependencies.${x[0].replaceAll('.', '\\.')}`, x[1], { preservePaths: false })
+      set(
+        targetPkgJson,
+        `devDependencies.${x[0].replaceAll('.', '\\.')}`,
+        `^${pkgVersion}`,
+        { preservePaths: false }
+      )
+    } else if (!isWorkspace(targetDevDeps[x[0]])) {
+      set(
+        targetPkgJson,
+        `devDependencies.${x[0].replaceAll('.', '\\.')}`,
+        x[1],
+        { preservePaths: false }
+      )
     }
   })
   for (const [k, v] of scriptsEntries) {
@@ -62,14 +76,20 @@ export function setPkgJson(sourcePkgJson: PackageJson, targetPkgJson: PackageJso
 }
 
 function confirmOverwrite(filename: string) {
-  return confirm({ message: `${pc.greenBright(filename)} 文件内容发生改变,是否覆盖?`, default: true })
+  return confirm({
+    message: `${pc.greenBright(filename)} 文件内容发生改变,是否覆盖?`,
+    default: true,
+  })
 }
 
 export async function upgradeMonorepo(opts: CliOpts) {
-  const { outDir, raw, interactive, cwd } = defu<Required<CliOpts>, CliOpts[]>(opts, {
-    cwd: process.cwd(),
-    outDir: '',
-  })
+  const { outDir, raw, interactive, cwd } = defu<Required<CliOpts>, CliOpts[]>(
+    opts,
+    {
+      cwd: process.cwd(),
+      outDir: '',
+    }
+  )
   const absOutDir = path.isAbsolute(outDir) ? outDir : path.join(cwd, outDir)
   const gitClient = new GitClient({
     baseDir: cwd,
@@ -109,7 +129,7 @@ export async function upgradeMonorepo(opts: CliOpts) {
           let isOverwrite = true
           if (targetIsExisted) {
             const src = await fs.readFile(file.path)
-            const dest = target ?? await fs.readFile(targetPath)
+            const dest = target ?? (await fs.readFile(targetPath))
             if (await isFileChanged(src, dest)) {
               isOverwrite = await confirmOverwrite(relPath)
             }
@@ -120,8 +140,8 @@ export async function upgradeMonorepo(opts: CliOpts) {
         if (relPath === 'package.json') {
           const sourcePath = file.path
           if (targetIsExisted) {
-            const sourcePkgJson = await fs.readJson(sourcePath) as PackageJson
-            const targetPkgJson = await fs.readJson(targetPath) as PackageJson
+            const sourcePkgJson = (await fs.readJson(sourcePath)) as PackageJson
+            const targetPkgJson = (await fs.readJson(targetPath)) as PackageJson
             setPkgJson(sourcePkgJson, targetPkgJson)
             const data = JSON.stringify(targetPkgJson, undefined, 2)
             // packageJson
@@ -130,8 +150,7 @@ export async function upgradeMonorepo(opts: CliOpts) {
             logger.success(targetPath)
             // }
           }
-        }
-        else if (relPath === '.changeset/config.json' && repoName) {
+        } else if (relPath === '.changeset/config.json' && repoName) {
           const changesetJson = await fs.readJson(file.path)
           set(changesetJson, 'changelog.1.repo', repoName)
 
@@ -141,12 +160,8 @@ export async function upgradeMonorepo(opts: CliOpts) {
             await fs.outputFile(targetPath, `${data}\n`, 'utf8')
             logger.success(targetPath)
           }
-        }
-        else if (await overwriteOrCopy()) {
-          await fs.copy(
-            file.path,
-            targetPath,
-          )
+        } else if (await overwriteOrCopy()) {
+          await fs.copy(file.path, targetPath)
           logger.success(targetPath)
         }
       }

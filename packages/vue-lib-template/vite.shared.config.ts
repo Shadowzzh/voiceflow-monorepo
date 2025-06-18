@@ -10,7 +10,5 @@ export const sharedConfig = defineConfig({
       '~': path.resolve(import.meta.dirname, 'lib'),
     },
   },
-  plugins: [
-    vue(),
-  ],
+  plugins: [vue()],
 })

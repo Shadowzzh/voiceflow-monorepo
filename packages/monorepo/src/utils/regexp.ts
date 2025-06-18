@@ -1,7 +1,5 @@
 export function escapeStringRegexp(str: string) {
-  return str
-    .replace(/[|\\{}()[\]^$+*?.]/g, '\\$&')
-    .replace(/-/g, '\\x2d')
+  return str.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&').replace(/-/g, '\\x2d')
 }
 
 export function isMatch(str: string, arr: RegExp[]) {

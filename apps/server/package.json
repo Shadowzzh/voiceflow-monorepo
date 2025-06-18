@@ -28,9 +28,7 @@
     "build": "tsup",
     "test": "vitest run",
     "test:dev": "vitest",
-    "release": "pnpm publish",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "release": "pnpm publish"
   },
   "publishConfig": {
     "exports": {
