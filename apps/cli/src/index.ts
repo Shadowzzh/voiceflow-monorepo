@@ -1,5 +1,12 @@
-import { bar } from '@icebreakers/tsup-template'
-import { foo, format } from '@icebreakers/unbuild-template'
+export function bar() {
+  return 'foo'
+}
 
-console.log('Website Bootstrap!')
-console.log(foo() + bar(), format('hello world!'))
+export function getDirname() {
+  return __dirname
+}
+
+export enum xx {
+  id,
+  dd,
+}

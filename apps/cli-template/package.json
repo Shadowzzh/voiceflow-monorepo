@@ -1,0 +1,41 @@
+{
+  "name": "@icebreakers/cli",
+  "type": "module",
+  "version": "0.0.0",
+  "description": "icebreaker's cli template",
+  "author": "ziheng <shadow1746556951@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shadowzzh/voiceflow-monorepo.git",
+    "directory": "apps/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/Shadowzzh/voiceflow-monorepo/issues"
+  },
+  "keywords": [],
+  "bin": {
+    "ice": "./dev/index.ts"
+  },
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "mono": "npx @icebreakers/monorepo --outDir=dist/common",
+    "mono:raw": "npx @icebreakers/monorepo --outDir=dist/raw --raw",
+    "mono:i": "npx @icebreakers/monorepo --outDir=dist/interactive -i",
+    "dev": "tsup --watch --sourcemap",
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@icebreakers/tsup-template": "workspace:*",
+    "@icebreakers/unbuild-template": "workspace:*"
+  },
+  "devDependencies": {
+    "@icebreakers/monorepo": "workspace:*"
+  },
+  "//----------": "pnpm monorepo",
+  "publishConfig": {
+    "bin": {
+      "ice": "./bin/index.js"
+    }
+  }
+}
