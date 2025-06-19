@@ -1,40 +1,72 @@
 {
-  // Use Biome as the default formatter
+  // ====== 编辑器配置 ======
+  // 使用 Biome 作为默认的代码格式化工具
   "editor.defaultFormatter": "biomejs.biome",
+  // 保存文件时自动格式化代码
   "editor.formatOnSave": true,
-  // Auto fix with Biome
+  // ====== 代码操作配置 ======
+  // 保存时自动执行的代码操作
   "editor.codeActionsOnSave": {
+    // 使用 Biome 进行快速修复（如修复 lint 错误）
     "quickfix.biome": "explicit",
+    // 使用 Biome 自动整理导入语句
     "source.organizeImports.biome": "explicit"
   },
+  // ====== Linux 终端环境变量配置 ======
+  // 为 Linux 系统配置国内镜像源，加速包下载
   "terminal.integrated.env.linux": {
+    // npm 包管理器使用淘宝镜像
     "COREPACK_NPM_REGISTRY": "https://registry.npmmirror.com",
+    // Edge WebDriver 下载镜像
     "EDGEDRIVER_CDNURL": "https://npmmirror.com/mirrors/edgedriver",
+    // Node.js 官方二进制文件镜像
     "NODEJS_ORG_MIRROR": "https://cdn.npmmirror.com/binaries/node",
+    // NVM 使用的 Node.js 镜像
     "NVM_NODEJS_ORG_MIRROR": "https://cdn.npmmirror.com/binaries/node",
+    // PhantomJS 下载镜像
     "PHANTOMJS_CDNURL": "https://cdn.npmmirror.com/binaries/phantomjs",
+    // Chrome WebDriver 下载镜像
     "CHROMEDRIVER_CDNURL": "https://cdn.npmmirror.com/binaries/chromedriver",
+    // Opera WebDriver 下载镜像
     "OPERADRIVER_CDNURL": "https://cdn.npmmirror.com/binaries/operadriver",
+    // Cypress 测试框架下载镜像
     "CYPRESS_DOWNLOAD_PATH_TEMPLATE": "https://cdn.npmmirror.com/binaries/cypress/${version}/${platform}-${arch}/cypress.zip",
+    // Electron 应用框架镜像
     "ELECTRON_MIRROR": "https://cdn.npmmirror.com/binaries/electron/",
+    // Electron Builder 二进制文件镜像
     "ELECTRON_BUILDER_BINARIES_MIRROR": "https://cdn.npmmirror.com/binaries/electron-builder-binaries/",
+    // Sass CSS 预处理器镜像
     "SASS_BINARY_SITE": "https://cdn.npmmirror.com/binaries/node-sass",
+    // SWC JavaScript/TypeScript 编译器镜像
     "SWC_BINARY_SITE": "https://cdn.npmmirror.com/binaries/node-swc",
+    // NW.js 应用框架镜像
     "NWJS_URLBASE": "https://cdn.npmmirror.com/binaries/nwjs/v",
+    // Puppeteer 浏览器自动化工具镜像
     "PUPPETEER_DOWNLOAD_HOST": "https://cdn.npmmirror.com/binaries/chrome-for-testing",
     "PUPPETEER_DOWNLOAD_BASE_URL": "https://cdn.npmmirror.com/binaries/chrome-for-testing",
+    // Playwright 浏览器自动化工具镜像
     "PLAYWRIGHT_DOWNLOAD_HOST": "https://cdn.npmmirror.com/binaries/playwright",
+    // Sentry CLI 工具镜像
     "SENTRYCLI_CDNURL": "https://cdn.npmmirror.com/binaries/sentry-cli",
+    // Sauce Labs 测试工具镜像
     "SAUCECTL_INSTALL_BINARY_MIRROR": "https://cdn.npmmirror.com/binaries/saucectl",
+    // RE2 正则表达式引擎镜像
     "RE2_DOWNLOAD_MIRROR": "https://cdn.npmmirror.com/binaries/node-re2",
     "RE2_DOWNLOAD_SKIP_PATH": "true",
+    // Prisma 数据库 ORM 引擎镜像
     "PRISMA_ENGINES_MIRROR": "https://cdn.npmmirror.com/binaries/prisma",
+    // SQLite 数据库驱动镜像
     "npm_config_better_sqlite3_binary_host": "https://cdn.npmmirror.com/binaries/better-sqlite3",
+    // 系统密钥存储库镜像
     "npm_config_keytar_binary_host": "https://cdn.npmmirror.com/binaries/keytar",
+    // Sharp 图像处理库镜像
     "npm_config_sharp_binary_host": "https://cdn.npmmirror.com/binaries/sharp",
     "npm_config_sharp_libvips_binary_host": "https://cdn.npmmirror.com/binaries/sharp-libvips",
+    // RobotJS 桌面自动化库镜像
     "npm_config_robotjs_binary_host": "https://cdn.npmmirror.com/binaries/robotjs"
   },
+  // ====== Windows 终端环境变量配置 ======
+  // 为 Windows 系统配置相同的国内镜像源
   "terminal.integrated.env.windows": {
     "COREPACK_NPM_REGISTRY": "https://registry.npmmirror.com",
     "EDGEDRIVER_CDNURL": "https://npmmirror.com/mirrors/edgedriver",
@@ -63,6 +95,8 @@
     "npm_config_sharp_libvips_binary_host": "https://cdn.npmmirror.com/binaries/sharp-libvips",
     "npm_config_robotjs_binary_host": "https://cdn.npmmirror.com/binaries/robotjs"
   },
+  // ====== macOS 终端环境变量配置 ======
+  // 为 macOS 系统配置相同的国内镜像源
   "terminal.integrated.env.osx": {
     "COREPACK_NPM_REGISTRY": "https://registry.npmmirror.com",
     "EDGEDRIVER_CDNURL": "https://npmmirror.com/mirrors/edgedriver",
