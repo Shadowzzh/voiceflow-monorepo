@@ -9,7 +9,7 @@ import { detectHardware, type HardwareInfo, } from '@/installer/detectHardware'
 import { formatBytes } from '@/utils/unit'
 
 export interface Environment {
-  platform: string
+  platform: NodeJS.Platform
   arch: string
   nodeVersion: string
   memory: number
@@ -85,7 +85,7 @@ function generateHardwareInfo(env: Environment): string {
     `${chalk.blue('CPU:')} ${env.hardware.cpu.model} (${env.hardware.cpu.cores} 核心)`,
     `${chalk.blue('内存:')} ${formatBytes(env.hardware.memory.total)} 总容量，${formatBytes(env.hardware.memory.available)} 可用`,
     generateGpuInfo(env.hardware.gpu),
-    `${chalk.blue('磁盘:')} ${env.hardware.disk.total}GB 总容量，${env.hardware.disk.available}GB 可用`
+    `${chalk.blue('磁盘:')} ${formatBytes(env.hardware.disk.total)} 总容量，${formatBytes(env.hardware.disk.available)} 可用`
   ]
 
   return lines.join('\n')

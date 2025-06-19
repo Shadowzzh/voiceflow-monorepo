@@ -1,19 +1,50 @@
 import chalk from 'chalk'
 import { Command } from 'commander'
-import enquirer from 'enquirer'
-import ora from 'ora'
+import { runAutomaticInstallation } from '@/installer/automatic'
 import {
   detectEnvironment,
   displayEnvironmentSummary,
 } from '@/installer/environment'
 
+/**
+ * 交互式设置
+ */
 export async function runInteractiveSetup() {
   console.clear()
-  // console.log(installationBanner())
 
-  // 检测用户环境
-  const environment = await detectEnvironment()
-  displayEnvironmentSummary(environment)
+  // 创建 AbortController 用于处理中断
+  const abortController = new AbortController()
+
+  // 设置 Ctrl+C 信号处理
+  const handleInterrupt = () => {
+    abortController.abort()
+  }
+
+  // 监听 SIGINT (Ctrl+C) 和 SIGTERM 信号
+  process.on('SIGINT', handleInterrupt)
+  process.on('SIGTERM', handleInterrupt)
+
+  try {
+
+    // 检测用户环境
+    const environment = await detectEnvironment()
+    // 显示环境信息
+    displayEnvironmentSummary(environment)
+    // 运行自动安装
+    await runAutomaticInstallation(environment, abortController)
+  } catch (error) {
+    // 如果是用户主动取消，则正常退出
+    if (error instanceof Error && (error.message.includes('取消') || error.name === 'AbortError')) {
+      console.log(chalk.yellow('安装已取消'))
+      process.exit(0)
+    }
+    // 其他错误则抛出
+    throw error
+  } finally {
+    // 清理信号监听器
+    process.removeListener('SIGINT', handleInterrupt)
+    process.removeListener('SIGTERM', handleInterrupt)
+  }
 
   // // 检查是否已安装const existingInstallation = await checkExistingInstallation();
   // if (existingInstallation.found) {

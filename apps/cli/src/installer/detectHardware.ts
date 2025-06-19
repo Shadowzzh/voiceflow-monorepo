@@ -605,7 +605,7 @@ interface DiskInfo {
 // 平台信息接口
 interface PlatformInfo {
   /** 操作系统 */
-  os: string
+  os: NodeJS.Platform
   /** 版本 */
   version: string
   /** 架构 */
