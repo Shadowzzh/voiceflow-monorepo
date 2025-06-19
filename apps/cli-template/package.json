@@ -8,7 +8,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Shadowzzh/voiceflow-monorepo.git",
-    "directory": "apps/cli"
+    "directory": "apps/cli-template"
   },
   "bugs": {
     "url": "https://github.com/Shadowzzh/voiceflow-monorepo/issues"

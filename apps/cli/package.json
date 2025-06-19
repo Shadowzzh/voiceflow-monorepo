@@ -1,17 +1,17 @@
 {
-  "name": "cli",
+  "name": "@voiceflow/cli",
   "type": "module",
   "version": "0.0.0",
   "description": "tsup build package template",
-  "author": "ice breaker <1324318532@qq.com>",
+  "author": "ziheng <shadow1746556951@gmail.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sonofmagic/monorepo-template.git",
-    "directory": "packages/tsup-template"
+    "url": "git+https://github.com/Shadowzzh/voiceflow-monorepo.git",
+    "directory": "apps/cli"
   },
   "bugs": {
-    "url": "https://github.com/sonofmagic/monorepo-template/issues"
+    "url": "https://github.com/Shadowzzh/voiceflow-monorepo/issues"
   },
   "keywords": [],
   "sideEffects": false,
@@ -29,6 +29,8 @@
     "dist"
   ],
   "scripts": {
+    "exec": "node dist/index.cjs",
+    "start": "tsx src/index.ts",
     "dev": "unbuild --stub",
     "build:watch": "tsup --watch --sourcemap",
     "build": "tsup",
@@ -38,5 +40,11 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix"
   },
-  "publishConfig": {}
+  "publishConfig": {},
+  "dependencies": {
+    "chalk": "^5.4.1",
+    "commander": "^14.0.0",
+    "enquirer": "^2.4.1",
+    "ora": "^8.2.0"
+  }
 }

@@ -16,6 +16,7 @@
     "node": ">=20.0.0"
   },
   "scripts": {
+    "cli": "pnpm --filter @voiceflow/cli",
     "build": "turbo run build",
     "dev": "turbo run dev --parallel",
     "test": "vitest run",

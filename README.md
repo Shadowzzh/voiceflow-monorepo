@@ -2,7 +2,8 @@
 
 ## Projects
 
-- [@icebreakers/cli](apps/cli) - icebreaker's cli template
+- [cli](apps/cli) - tsup build package template
+- [@icebreakers/cli](apps/cli-template) - icebreaker's cli template
 - [@icebreakers/server](apps/server) - tsup(esbuild) build package template
 - [@icebreakers/monorepo](packages/monorepo) - icebreaker's monorepo config generator
 - [@icebreakers/tsup-template](packages/monorepo/templates/tsup-template) - tsup build package template
