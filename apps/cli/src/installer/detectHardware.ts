@@ -17,11 +17,11 @@ const CONFIG = {
   COMMAND_TIMEOUT: 5000,
   /** 最大线程数 */
   MAX_THREADS: 8,
-  /** 内存阈值（GB） */
+  /** 内存阈值（字节） */
   MEMORY_THRESHOLDS: {
-    LARGE_MODEL: 8,
-    MEDIUM_MODEL: 4,
-    SMALL_MODEL: 2,
+    LARGE_MODEL: 8 * 1024 * 1024 * 1024, // 8GB
+    MEDIUM_MODEL: 4 * 1024 * 1024 * 1024, // 4GB
+    SMALL_MODEL: 2 * 1024 * 1024 * 1024, // 2GB
   },
 } as const
 
@@ -411,7 +411,7 @@ async function detectDisk(): Promise<DiskInfo> {
  * 检测 Unix-like 系统的磁盘信息
  */
 async function detectUnixDisk(): Promise<DiskInfo> {
-  const output = await safeExec('df -h .')
+  const output = await safeExec('df .')
 
   if (!output) {
     return { available: 0, total: 0, usage: 0 }
@@ -427,9 +427,9 @@ async function detectUnixDisk(): Promise<DiskInfo> {
     return { available: 0, total: 0, usage: 0 }
   }
 
-  const total = safeParseInt(parts[1])
-  const used = safeParseInt(parts[2])
-  const available = safeParseInt(parts[3])
+  const total = safeParseInt(parts[1]) * 1024 // KB to bytes
+  const used = safeParseInt(parts[2]) * 1024 // KB to bytes
+  const available = safeParseInt(parts[3]) * 1024 // KB to bytes
 
   return {
     total: Math.round(total),
@@ -567,9 +567,9 @@ interface CPUInfo {
 // 内存信息接口
 interface MemoryInfo {
   /** 总内存 */
-  total: number // GB
+  total: number // 字节
   /** 可用内存 */
-  available: number // GB
+  available: number // 字节
   /** 使用率 */
   usage: number // percentage
 }
@@ -595,9 +595,9 @@ interface GPUInfo {
 // 磁盘信息接口
 interface DiskInfo {
   /** 可用空间 */
-  available: number // GB
+  available: number // 字节
   /** 总空间 */
-  total: number // GB
+  total: number // 字节
   /** 使用率 */
   usage: number // percentage
 }

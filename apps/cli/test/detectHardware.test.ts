@@ -50,8 +50,8 @@ describe('detectHardware', () => {
         frequency: 4000,
       },
       memory: {
-        total: 16,
-        available: 8,
+        total: 16 * 1024 * 1024 * 1024, // 16GB in bytes
+        available: 8 * 1024 * 1024 * 1024, // 8GB in bytes
         usage: 50,
       },
       gpu: {
@@ -63,8 +63,8 @@ describe('detectHardware', () => {
         opencl: false,
       },
       disk: {
-        total: 228,
-        available: 150,
+        total: 228 * 1024 * 1024 * 1024, // 228GB in bytes
+        available: 150 * 1024 * 1024 * 1024, // 150GB in bytes
         usage: 34,
       },
       platform: {
@@ -104,14 +104,14 @@ describe('detectHardware', () => {
         frequency: 2400,
       },
       memory: {
-        total: 4,
-        available: 2,
+        total: 4 * 1024 * 1024 * 1024, // 4GB in bytes
+        available: 2 * 1024 * 1024 * 1024, // 2GB in bytes
         usage: 50,
       },
       gpu: undefined, // 没有 GPU
       disk: {
-        total: 256,
-        available: 100,
+        total: 256 * 1024 * 1024 * 1024, // 256GB in bytes
+        available: 100 * 1024 * 1024 * 1024, // 100GB in bytes
         usage: 60,
       },
       platform: {
