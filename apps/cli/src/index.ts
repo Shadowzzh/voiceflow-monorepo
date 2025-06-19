@@ -12,7 +12,6 @@ process.on('unhandledRejection', (reason) => {
   quickError(`未处理的错误: ${message}`, '请重新运行程序')
 })
 
-
 // 主函数
 async function main() {
   await safeRun(

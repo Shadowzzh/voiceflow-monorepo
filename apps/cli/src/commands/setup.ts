@@ -25,7 +25,6 @@ export async function runInteractiveSetup() {
   process.on('SIGTERM', handleInterrupt)
 
   try {
-
     // 检测用户环境
     const environment = await detectEnvironment()
     // 显示环境信息
@@ -34,7 +33,10 @@ export async function runInteractiveSetup() {
     await runAutomaticInstallation(environment, abortController)
   } catch (error) {
     // 如果是用户主动取消，则正常退出
-    if (error instanceof Error && (error.message.includes('取消') || error.name === 'AbortError')) {
+    if (
+      error instanceof Error &&
+      (error.message.includes('取消') || error.name === 'AbortError')
+    ) {
       console.log(chalk.yellow('安装已取消'))
       process.exit(0)
     }

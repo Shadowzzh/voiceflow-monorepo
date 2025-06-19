@@ -5,7 +5,7 @@ import {
   checkDependencies,
   type SystemDependencies,
 } from '@/installer/checkDependencies'
-import { detectHardware, type HardwareInfo, } from '@/installer/detectHardware'
+import { detectHardware, type HardwareInfo } from '@/installer/detectHardware'
 import { formatBytes } from '@/utils/unit'
 
 export interface Environment {
@@ -57,7 +57,7 @@ function generateEnvironmentSummary(env: Environment): string {
     generateHardwareInfo(env),
     generateDependenciesInfo(env),
     generateWarningsAndSuggestions(env),
-    `\n${chalk.gray('─'.repeat(50))}`
+    `\n${chalk.gray('─'.repeat(50))}`,
   ]
 
   return sections.join('\n')
@@ -70,7 +70,7 @@ function generateBasicSystemInfo(env: Environment): string {
   const lines = [
     `${chalk.blue('操作系统:')} ${getPlatformName(env.platform)} (${env.arch})`,
     `${chalk.blue('Node.js:')} ${env.nodeVersion}`,
-    `${chalk.blue('内存:')} ${formatBytes(env.memory)}`
+    `${chalk.blue('内存:')} ${formatBytes(env.memory)}`,
   ]
 
   return lines.join('\n')
@@ -85,7 +85,7 @@ function generateHardwareInfo(env: Environment): string {
     `${chalk.blue('CPU:')} ${env.hardware.cpu.model} (${env.hardware.cpu.cores} 核心)`,
     `${chalk.blue('内存:')} ${formatBytes(env.hardware.memory.total)} 总容量，${formatBytes(env.hardware.memory.available)} 可用`,
     generateGpuInfo(env.hardware.gpu),
-    `${chalk.blue('磁盘:')} ${formatBytes(env.hardware.disk.total)} 总容量，${formatBytes(env.hardware.disk.available)} 可用`
+    `${chalk.blue('磁盘:')} ${formatBytes(env.hardware.disk.total)} 总容量，${formatBytes(env.hardware.disk.available)} 可用`,
   ]
 
   return lines.join('\n')
@@ -100,7 +100,8 @@ function generateGpuInfo(gpu: HardwareInfo['gpu']): string {
   }
 
   const gpuFeatures = getGpuFeatures(gpu)
-  const featuresText = gpuFeatures.length > 0 ? ` (${gpuFeatures.join(', ')})` : ''
+  const featuresText =
+    gpuFeatures.length > 0 ? ` (${gpuFeatures.join(', ')})` : ''
   const gpuLine = `${chalk.blue('GPU:')} ${gpu.vendor} ${gpu.model}${featuresText}`
 
   if (gpu.memory) {
@@ -130,7 +131,7 @@ function generateDependenciesInfo(env: Environment): string {
     `\n${chalk.cyan('📦 系统依赖')}`,
     `${chalk.blue('Git:')} ${getStatusText(deps.git.available)} ${deps.git.version || ''}`,
     `${chalk.blue('CMake:')} ${getStatusText(deps.cmake.available)} ${deps.cmake.version || ''}`,
-    `${chalk.blue('编译器:')} ${getStatusText(deps.compiler.available)} ${deps.compiler.version || ''}`
+    `${chalk.blue('编译器:')} ${getStatusText(deps.compiler.available)} ${deps.compiler.version || ''}`,
   ]
 
   if (deps.python) {
@@ -194,7 +195,12 @@ function getEnvironmentWarnings(env: Environment): string[] {
   const diskWarnings = getDiskWarnings(env.hardware.disk.available)
   const dependencyWarnings = getDependencyWarnings(env.dependencies)
 
-  return [...warnings, ...memoryWarnings, ...diskWarnings, ...dependencyWarnings]
+  return [
+    ...warnings,
+    ...memoryWarnings,
+    ...diskWarnings,
+    ...dependencyWarnings,
+  ]
 }
 
 /**

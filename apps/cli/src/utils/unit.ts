@@ -14,16 +14,24 @@ type ByteUnit = keyof typeof BYTE_UNITS
  * @param unit 目标单位
  * @param precision 小数位数，默认2位
  */
-export function convertBytes(bytes: number, unit: ByteUnit, precision = 2): number {
+export function convertBytes(
+  bytes: number,
+  unit: ByteUnit,
+  precision = 2
+): number {
   if (bytes === 0) return 0
   return Number((bytes / BYTE_UNITS[unit]).toFixed(precision))
 }
 
 // 便捷函数
-export const toKB = (bytes: number, precision = 2) => convertBytes(bytes, 'KB', precision)
-export const toMB = (bytes: number, precision = 2) => convertBytes(bytes, 'MB', precision)
-export const toGB = (bytes: number, precision = 2) => convertBytes(bytes, 'GB', precision)
-export const toTB = (bytes: number, precision = 2) => convertBytes(bytes, 'TB', precision)
+export const toKB = (bytes: number, precision = 2) =>
+  convertBytes(bytes, 'KB', precision)
+export const toMB = (bytes: number, precision = 2) =>
+  convertBytes(bytes, 'MB', precision)
+export const toGB = (bytes: number, precision = 2) =>
+  convertBytes(bytes, 'GB', precision)
+export const toTB = (bytes: number, precision = 2) =>
+  convertBytes(bytes, 'TB', precision)
 
 /**
  * 自动选择合适的单位并格式化
@@ -46,9 +54,10 @@ export function formatBytes(bytes: number, precision = 2): string {
     const value = bytes / divisor
     if (value >= 1) {
       // 对于字节单位，不显示小数
-      const formattedValue = unit === 'B'
-        ? Math.round(value).toString()
-        : Number(value.toFixed(precision)).toString()
+      const formattedValue =
+        unit === 'B'
+          ? Math.round(value).toString()
+          : Number(value.toFixed(precision)).toString()
       return `${formattedValue} ${unit}`
     }
   }
@@ -62,7 +71,10 @@ export function formatBytes(bytes: number, precision = 2): string {
  * @param precision 小数位数，默认2位
  * @returns { value: number, unit: string }
  */
-export function autoConvertBytes(bytes: number, precision = 2): { value: number; unit: string } {
+export function autoConvertBytes(
+  bytes: number,
+  precision = 2
+): { value: number; unit: string } {
   if (bytes === 0) return { value: 0, unit: 'B' }
 
   const units = [
@@ -76,9 +88,8 @@ export function autoConvertBytes(bytes: number, precision = 2): { value: number;
   for (const { unit, divisor } of units) {
     const value = bytes / divisor
     if (value >= 1) {
-      const formattedValue = unit === 'B'
-        ? Math.round(value)
-        : Number(value.toFixed(precision))
+      const formattedValue =
+        unit === 'B' ? Math.round(value) : Number(value.toFixed(precision))
       return { value: formattedValue, unit }
     }
   }

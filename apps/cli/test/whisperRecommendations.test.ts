@@ -9,7 +9,6 @@ describe('Whisper 推荐配置', () => {
     const hardware = await detectHardware()
     const recommendations = getWhisperRecommendations(hardware)
 
-
     // 验证推荐配置的合理性
     expect(recommendations.threads).toBeGreaterThan(0)
     expect(recommendations.threads).toBeLessThanOrEqual(hardware.cpu.cores)

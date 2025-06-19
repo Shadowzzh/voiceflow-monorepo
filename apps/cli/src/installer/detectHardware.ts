@@ -491,7 +491,6 @@ async function detectPlatform(): Promise<PlatformInfo> {
   }
 }
 
-
 /**
  * 获取推荐的 Whisper.cpp 配置
  */

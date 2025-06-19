@@ -1,5 +1,4 @@
-import { promises as fs } from 'fs'
-
+import { promises as fs } from 'node:fs'
 
 interface DownloadProgress {
   /** 进度百分比 */
@@ -85,7 +84,7 @@ export async function downloadFile(
         progress?.({
           progress: progressPercent,
           totalSize,
-          currentSize: downloadedSize
+          currentSize: downloadedSize,
         })
       }
     }

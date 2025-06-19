@@ -1,8 +1,8 @@
+import { promises as fs } from 'node:fs'
+import path from 'node:path'
 import chalk from 'chalk'
-import { promises as fs } from 'fs'
 import ora from 'ora'
-import path from 'path'
-import { EnvHttpProxyAgent, setGlobalDispatcher } from "undici"
+import { EnvHttpProxyAgent, setGlobalDispatcher } from 'undici'
 import { YTDLP_INSTALL_DIR } from '@/config'
 import type { Environment } from '@/installer/environment'
 import { downloadFile } from '@/utils/download'
@@ -10,14 +10,17 @@ import { quickError, quickExit, safeRun } from '@/utils/error'
 import { formatBytes } from '@/utils/unit'
 
 /** yt-dlp 下载地址 */
-const YTDLP_DOWNLOAD_URL_DIR = 'https://github.com/yt-dlp/yt-dlp/releases/download/2025.06.09'
+const YTDLP_DOWNLOAD_URL_DIR =
+  'https://github.com/yt-dlp/yt-dlp/releases/download/2025.06.09'
 
 // 创建 EnvHttpProxyAgent 实例，它将自动读取环境变量
 const envHttpProxyAgent = new EnvHttpProxyAgent()
 setGlobalDispatcher(envHttpProxyAgent)
 
-export async function runAutomaticInstallation(environment: Environment, abortController?: AbortController) {
-
+export async function runAutomaticInstallation(
+  environment: Environment,
+  abortController?: AbortController
+) {
   // 获取可执行文件名
   const executableName = getYtDlpExecutableName(environment)
 
@@ -29,7 +32,6 @@ export async function runAutomaticInstallation(environment: Environment, abortCo
   }
 
   const spinner = ora('正在安装 yt-dlp...').start()
-
 
   // 创建安装目录
   await safeRun(
@@ -45,9 +47,16 @@ export async function runAutomaticInstallation(environment: Environment, abortCo
 
   // 下载文件
   try {
-    await downloadFile(downloadUrl, targetPath, ({ progress, totalSize, currentSize }) => {
-      spinner.text = chalk.cyan(`下载 yt-dlp 中... ${progress}% (${formatBytes(currentSize)}/${formatBytes(totalSize)})`)
-    }, abortController?.signal)
+    await downloadFile(
+      downloadUrl,
+      targetPath,
+      ({ progress, totalSize, currentSize }) => {
+        spinner.text = chalk.cyan(
+          `下载 yt-dlp 中... ${progress}% (${formatBytes(currentSize)}/${formatBytes(totalSize)})`
+        )
+      },
+      abortController?.signal
+    )
   } catch (error) {
     spinner.fail()
 
@@ -72,7 +81,6 @@ export async function runAutomaticInstallation(environment: Environment, abortCo
   // )
 
   spinner.succeed('yt-dlp 安装成功')
-
 }
 
 /**
@@ -87,7 +95,9 @@ function getYtDlpExecutableName(environment: Environment) {
     case 'darwin':
       return 'yt-dlp_macos'
     case 'linux':
-      return environment.arch === 'arm64' ? 'yt-dlp_linux_aarch64' : 'yt-dlp_linux'
+      return environment.arch === 'arm64'
+        ? 'yt-dlp_linux_aarch64'
+        : 'yt-dlp_linux'
     default:
       quickError(`不支持的系统平台: ${environment.platform}`, '请检查系统平台')
   }
@@ -99,7 +109,10 @@ function getYtDlpExecutableName(environment: Environment) {
  * @returns 是否存在
  */
 async function checkFileExists(path: string) {
-  return fs.access(path).then(() => true).catch(() => false)
+  return fs
+    .access(path)
+    .then(() => true)
+    .catch(() => false)
 }
 
 /**
@@ -112,4 +125,3 @@ async function checkYtDlpInstalled(fileName: string) {
   const isExists = await checkFileExists(targetPath)
   return isExists
 }
-

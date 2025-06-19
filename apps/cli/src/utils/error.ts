@@ -95,7 +95,11 @@ export async function safeRunWithDefault<T>(
  * @param message 错误信息
  * @param suggestion 建议
  */
-export function assert(condition: boolean, message: string, suggestion?: string): asserts condition {
+export function assert(
+  condition: boolean,
+  message: string,
+  suggestion?: string
+): asserts condition {
   if (!condition) {
     quickError(message, suggestion)
   }
@@ -106,9 +110,12 @@ export function assert(condition: boolean, message: string, suggestion?: string)
  * @param message 错误信息
  * @param suggestion 建议
  */
-export function assertExists<T>(value: T | null | undefined, message: string, suggestion?: string): asserts value is T {
+export function assertExists<T>(
+  value: T | null | undefined,
+  message: string,
+  suggestion?: string
+): asserts value is T {
   if (value == null) {
     quickError(message, suggestion)
   }
 }
-
