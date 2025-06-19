@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { detectHardware, getWhisperRecommendations } from '../src/installer/detectHardware'
+import {
+  detectHardware,
+  getWhisperRecommendations,
+} from '../src/installer/detectHardware'
 
 describe('detectHardware', () => {
   it('应该返回硬件信息', async () => {

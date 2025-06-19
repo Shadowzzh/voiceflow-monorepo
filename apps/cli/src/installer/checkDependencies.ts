@@ -112,10 +112,12 @@ function extractVersion(output: string): string {
  * @param dependencies 依赖项检查结果
  * @returns 是否满足所有要求
  */
-export function checkDependenciesRequirements(dependencies: SystemDependencies): boolean {
+export function checkDependenciesRequirements(
+  dependencies: SystemDependencies
+): boolean {
   const requiredDeps = ['git', 'cmake', 'compiler'] as const
 
-  return requiredDeps.every(dep => dependencies[dep]?.available === true)
+  return requiredDeps.every((dep) => dependencies[dep]?.available === true)
 }
 
 /**
@@ -123,7 +125,9 @@ export function checkDependenciesRequirements(dependencies: SystemDependencies):
  * @param dependencies 依赖项检查结果
  * @returns 缺失的依赖项名称数组
  */
-export function getMissingDependencies(dependencies: SystemDependencies): string[] {
+export function getMissingDependencies(
+  dependencies: SystemDependencies
+): string[] {
   const missing: string[] = []
 
   if (!dependencies.git?.available) missing.push('git')

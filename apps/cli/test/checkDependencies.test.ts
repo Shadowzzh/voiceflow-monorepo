@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { checkDependencies, checkDependenciesRequirements, getMissingDependencies } from '../src/installer/checkDependencies'
+import {
+  checkDependencies,
+  checkDependenciesRequirements,
+  getMissingDependencies,
+} from '../src/installer/checkDependencies'
 
 describe('checkDependencies', () => {
   it('应该返回依赖项检查结果', async () => {

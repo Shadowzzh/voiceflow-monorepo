@@ -1,9 +1,8 @@
-import { exec, type SpawnOptionsWithoutStdio, spawn } from "node:child_process"
-import { promisify } from "node:util"
+import { exec, type SpawnOptionsWithoutStdio, spawn } from 'node:child_process'
+import { promisify } from 'node:util'
 
 // 调试模式配置
 const DEBUG_MODE = process.env.DEBUG === 'true'
-
 
 /**
  * 执行命令的通用函数
@@ -26,7 +25,10 @@ interface SpawnOptions extends SpawnOptionsWithoutStdio {
 /**
  * 安全执行命令的包装函数
  */
-export async function safeExec(command: string, timeout = 5000): Promise<string | null> {
+export async function safeExec(
+  command: string,
+  timeout = 5000
+): Promise<string | null> {
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), timeout)
@@ -43,7 +45,6 @@ export async function safeExec(command: string, timeout = 5000): Promise<string 
   }
 }
 
-
 /**
  * 执行命令的通用函数
  * @param command 命令
@@ -54,37 +55,37 @@ export async function safeExec(command: string, timeout = 5000): Promise<string 
 export const execCommand = (
   command: string,
   args: string[] = [],
-  options: SpawnOptions = {},
+  options: SpawnOptions = {}
 ) => {
   const { timeout = 3 * 60 * 1000, stdoutCallback, stderrCallback } = options
 
   return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
-    console.log(`执行: ${command} ${args.join(" ")}`)
+    console.log(`执行: ${command} ${args.join(' ')}`)
 
     const process = spawn(command, args, {
-      stdio: ["pipe", "pipe", "pipe"],
+      stdio: ['pipe', 'pipe', 'pipe'],
       ...options,
     })
 
-    let stdout = ""
-    let stderr = ""
+    let stdout = ''
+    let stderr = ''
 
-    process.stdout.on("data", (data) => {
+    process.stdout.on('data', (data) => {
       stdout += data.toString()
       stdoutCallback?.({ line: data.toString() })
     })
 
-    process.stderr.on("data", (data) => {
+    process.stderr.on('data', (data) => {
       stderr += data.toString()
       stderrCallback?.({ line: data.toString() })
     })
 
     const timer = setTimeout(() => {
-      process.kill("SIGKILL")
-      reject(new Error("操作超时"))
+      process.kill('SIGKILL')
+      reject(new Error('操作超时'))
     }, timeout)
 
-    process.on("close", (code) => {
+    process.on('close', (code) => {
       clearTimeout(timer)
       if (code === 0) {
         resolve({ stdout, stderr })
@@ -93,10 +94,9 @@ export const execCommand = (
       }
     })
 
-    process.on("error", (error) => {
+    process.on('error', (error) => {
       clearTimeout(timer)
       reject(error)
     })
   })
 }
-

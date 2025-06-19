@@ -1,6 +1,6 @@
 import os from 'node:os'
 import { safeExec } from '@/utils/exec'
-import { safeParseFloat, safeParseInt } from '@/utils/parse'
+import { safeParseInt } from '@/utils/parse'
 
 /**
  * 硬件检测模块
@@ -23,11 +23,6 @@ const CONFIG = {
     MEDIUM_MODEL: 4,
     SMALL_MODEL: 2,
   },
-  /** 存储单位转换 */
-  BYTES_TO_GB: 1024 * 1024 * 1024,
-  BYTES_TO_MB: 1024 * 1024,
-  KB_TO_GB: 1024 * 1024,
-  MB_TO_GB: 1024,
 } as const
 
 /**
@@ -83,10 +78,15 @@ function getDefaultPlatform(): PlatformInfo {
 export async function detectHardware(): Promise<HardwareInfo> {
   // 并行执行所有检测
   const [cpu, memory, gpu, disk, platform] = await Promise.allSettled([
+    // 并行执行所有检测
     detectCPU(),
+    // 检测内存
     detectMemory(),
+    // 检测 GPU
     detectGPU(),
+    // 检测磁盘
     detectDisk(),
+    // 检测平台
     detectPlatform(),
   ])
 
@@ -95,7 +95,8 @@ export async function detectHardware(): Promise<HardwareInfo> {
     memory: memory.status === 'fulfilled' ? memory.value : getDefaultMemory(),
     gpu: gpu.status === 'fulfilled' ? gpu.value : undefined,
     disk: disk.status === 'fulfilled' ? disk.value : getDefaultDisk(),
-    platform: platform.status === 'fulfilled' ? platform.value : getDefaultPlatform(),
+    platform:
+      platform.status === 'fulfilled' ? platform.value : getDefaultPlatform(),
   }
 
   return hardware
@@ -193,7 +194,7 @@ async function detectLinuxCPUFromProc(): Promise<Partial<CPUInfo>> {
   const output = await safeExec('cat /proc/cpuinfo')
   if (output) {
     const lines = output.split('\n')
-    const modelLine = lines.find(line => line.includes('model name'))
+    const modelLine = lines.find((line) => line.includes('model name'))
     if (modelLine) {
       const model = modelLine.split(':')[1]?.trim()
       if (model) {
@@ -214,8 +215,8 @@ async function detectMemory(): Promise<MemoryInfo> {
   const usedMem = totalMem - freeMem
 
   return {
-    total: Math.round(totalMem / CONFIG.BYTES_TO_GB), // 转换为 GB
-    available: Math.round(freeMem / CONFIG.BYTES_TO_GB), // 转换为 GB
+    total: Math.round(totalMem),
+    available: Math.round(freeMem),
     usage: Math.round((usedMem / totalMem) * 100), // 使用率百分比
   }
 }
@@ -290,11 +291,13 @@ async function detectLinuxGPU(): Promise<Partial<GPUInfo>> {
   const updates: Partial<GPUInfo> = {}
 
   // 检查 NVIDIA GPU
-  const nvidiaOutput = await safeExec('nvidia-smi --query-gpu=name,memory.total --format=csv,noheader,nounits')
+  const nvidiaOutput = await safeExec(
+    'nvidia-smi --query-gpu=name,memory.total --format=csv,noheader,nounits'
+  )
   if (nvidiaOutput) {
     const lines = nvidiaOutput.split('\n')
     if (lines.length > 0 && lines[0]) {
-      const [name, memory] = lines[0].split(',').map(s => s.trim())
+      const [name, memory] = lines[0].split(',').map((s) => s.trim())
       updates.available = true
       updates.vendor = 'NVIDIA'
       updates.model = name
@@ -340,9 +343,13 @@ async function detectLinuxOtherGPU(): Promise<Partial<GPUInfo>> {
 async function detectWindowsGPU(): Promise<Partial<GPUInfo>> {
   const updates: Partial<GPUInfo> = {}
 
-  const output = await safeExec('wmic path win32_VideoController get name,AdapterRAM /format:csv')
+  const output = await safeExec(
+    'wmic path win32_VideoController get name,AdapterRAM /format:csv'
+  )
   if (output) {
-    const lines = output.split('\n').filter(line => line.trim() && !line.startsWith('Node'))
+    const lines = output
+      .split('\n')
+      .filter((line) => line.trim() && !line.startsWith('Node'))
     if (lines.length > 0) {
       const parts = lines[0].split(',')
       if (parts.length >= 2) {
@@ -352,7 +359,7 @@ async function detectWindowsGPU(): Promise<Partial<GPUInfo>> {
 
         const memory = safeParseInt(parts[0]?.trim())
         if (memory > 0) {
-          updates.memory = Math.round(memory / CONFIG.BYTES_TO_MB) // 转换为 MB
+          updates.memory = Math.round(memory) // 转换为 MB
         }
       }
     }
@@ -405,6 +412,7 @@ async function detectDisk(): Promise<DiskInfo> {
  */
 async function detectUnixDisk(): Promise<DiskInfo> {
   const output = await safeExec('df -h .')
+
   if (!output) {
     return { available: 0, total: 0, usage: 0 }
   }
@@ -419,9 +427,9 @@ async function detectUnixDisk(): Promise<DiskInfo> {
     return { available: 0, total: 0, usage: 0 }
   }
 
-  const total = parseStorageSize(parts[1])
-  const used = parseStorageSize(parts[2])
-  const available = parseStorageSize(parts[3])
+  const total = safeParseInt(parts[1])
+  const used = safeParseInt(parts[2])
+  const available = safeParseInt(parts[3])
 
   return {
     total: Math.round(total),
@@ -434,12 +442,16 @@ async function detectUnixDisk(): Promise<DiskInfo> {
  * 检测 Windows 系统的磁盘信息
  */
 async function detectWindowsDisk(): Promise<DiskInfo> {
-  const output = await safeExec('wmic logicaldisk where size^>0 get size,freespace,caption /format:csv')
+  const output = await safeExec(
+    'wmic logicaldisk where size^>0 get size,freespace,caption /format:csv'
+  )
   if (!output) {
     return { available: 0, total: 0, usage: 0 }
   }
 
-  const lines = output.split('\n').filter(line => line.trim() && !line.startsWith('Node'))
+  const lines = output
+    .split('\n')
+    .filter((line) => line.trim() && !line.startsWith('Node'))
   if (lines.length === 0) {
     return { available: 0, total: 0, usage: 0 }
   }
@@ -462,8 +474,8 @@ async function detectWindowsDisk(): Promise<DiskInfo> {
   }
 
   return {
-    total: Math.round(totalSize / CONFIG.BYTES_TO_GB), // 转换为 GB
-    available: Math.round(totalFree / CONFIG.BYTES_TO_GB), // 转换为 GB
+    total: Math.round(totalSize),
+    available: Math.round(totalFree),
     usage: Math.round(((totalSize - totalFree) / totalSize) * 100),
   }
 }
@@ -479,36 +491,6 @@ async function detectPlatform(): Promise<PlatformInfo> {
   }
 }
 
-// 预编译正则表达式
-const STORAGE_SIZE_REGEX = /^(\d+(?:\.\d+)?)(.*?)$/i
-
-// 存储单位映射
-const STORAGE_UNITS = new Map([
-  ['k', CONFIG.KB_TO_GB],
-  ['ki', CONFIG.KB_TO_GB],
-  ['m', CONFIG.MB_TO_GB],
-  ['mi', CONFIG.MB_TO_GB],
-  ['g', 1],
-  ['gi', 1],
-  ['t', 1024],
-  ['ti', 1024],
-  ['b', CONFIG.BYTES_TO_GB],
-  ['', CONFIG.BYTES_TO_GB],
-])
-
-/**
- * 解析存储大小字符串（如 "10G", "512M", "228Gi"）为 GB 数值
- */
-function parseStorageSize(sizeStr: string): number {
-  const match = sizeStr.match(STORAGE_SIZE_REGEX)
-  if (!match) return 0
-
-  const value = safeParseFloat(match[1])
-  const unit = match[2].toLowerCase()
-  const multiplier = STORAGE_UNITS.get(unit) ?? CONFIG.BYTES_TO_GB
-
-  return value / multiplier
-}
 
 /**
  * 获取推荐的 Whisper.cpp 配置
@@ -522,7 +504,10 @@ export function getWhisperRecommendations(hardware: HardwareInfo) {
   }
 
   // 根据 CPU 核心数设置线程数
-  recommendations.threads = Math.max(1, Math.min(hardware.cpu.cores, CONFIG.MAX_THREADS))
+  recommendations.threads = Math.max(
+    1,
+    Math.min(hardware.cpu.cores, CONFIG.MAX_THREADS)
+  )
 
   // 根据内存大小推荐模型
   const { LARGE_MODEL, MEDIUM_MODEL, SMALL_MODEL } = CONFIG.MEMORY_THRESHOLDS

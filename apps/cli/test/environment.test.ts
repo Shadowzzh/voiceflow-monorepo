@@ -1,10 +1,13 @@
 import { describe, expect, it, vi } from 'vitest'
-import { displayEnvironmentSummary, type Environment } from '@/installer/environment'
+import {
+  displayEnvironmentSummary,
+  type Environment,
+} from '@/installer/environment'
 
 describe('Environment', () => {
   it('应该正确显示环境摘要', () => {
     // Mock console.log
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => { })
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
     const mockEnv: Environment = {
       platform: 'darwin',
@@ -15,7 +18,7 @@ describe('Environment', () => {
         git: { available: true, version: '2.39.0' },
         cmake: { available: true, version: '3.25.0' },
         compiler: { available: true, version: 'clang 14.0.0' },
-        python: { available: true, version: '3.11.0' }
+        python: { available: true, version: '3.11.0' },
       },
       hardware: {
         cpu: {
@@ -23,12 +26,12 @@ describe('Environment', () => {
           cores: 10,
           threads: 10,
           architecture: 'arm64',
-          frequency: 3200
+          frequency: 3200,
         },
         memory: {
           total: 16,
           available: 8,
-          usage: 50
+          usage: 50,
         },
         gpu: {
           available: true,
@@ -37,19 +40,19 @@ describe('Environment', () => {
           memory: undefined,
           opencl: false,
           cuda: false,
-          metal: true
+          metal: true,
         },
         disk: {
           available: 150,
           total: 250,
-          usage: 40
+          usage: 40,
         },
         platform: {
           os: 'darwin',
           version: '23.0.0',
-          architecture: 'arm64'
-        }
-      }
+          architecture: 'arm64',
+        },
+      },
     }
 
     displayEnvironmentSummary(mockEnv)
@@ -58,7 +61,7 @@ describe('Environment', () => {
     expect(consoleSpy).toHaveBeenCalled()
 
     // 检查是否包含关键信息
-    const allCalls = consoleSpy.mock.calls.map(call => call[0]).join(' ')
+    const allCalls = consoleSpy.mock.calls.map((call) => call[0]).join(' ')
     expect(allCalls).toContain('系统环境信息')
     expect(allCalls).toContain('macOS')
     expect(allCalls).toContain('Apple M4')
@@ -70,7 +73,7 @@ describe('Environment', () => {
   })
 
   it('应该正确处理没有 GPU 的情况', () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => { })
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 
     const mockEnv: Environment = {
       platform: 'linux',
@@ -80,37 +83,37 @@ describe('Environment', () => {
       dependencies: {
         git: { available: false },
         cmake: { available: false },
-        compiler: { available: false }
+        compiler: { available: false },
       },
       hardware: {
         cpu: {
           model: 'Intel Core i5',
           cores: 4,
           threads: 8,
-          architecture: 'x64'
+          architecture: 'x64',
         },
         memory: {
           total: 8,
           available: 4,
-          usage: 50
+          usage: 50,
         },
         gpu: undefined,
         disk: {
           available: 50,
           total: 100,
-          usage: 50
+          usage: 50,
         },
         platform: {
           os: 'linux',
           version: '5.4.0',
-          architecture: 'x64'
-        }
-      }
+          architecture: 'x64',
+        },
+      },
     }
 
     displayEnvironmentSummary(mockEnv)
 
-    const allCalls = consoleSpy.mock.calls.map(call => call[0]).join(' ')
+    const allCalls = consoleSpy.mock.calls.map((call) => call[0]).join(' ')
     expect(allCalls).toContain('未检测到独立显卡')
     expect(allCalls).toContain('警告')
 

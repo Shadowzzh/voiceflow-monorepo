@@ -2,11 +2,14 @@ import chalk from 'chalk'
 import { Command } from 'commander'
 import enquirer from 'enquirer'
 import ora from 'ora'
-import { detectEnvironment, displayEnvironmentSummary } from '@/installer/environment'
+import {
+  detectEnvironment,
+  displayEnvironmentSummary,
+} from '@/installer/environment'
 
 export async function runInteractiveSetup() {
   console.clear()
-  console.log(installationBanner())
+  // console.log(installationBanner())
 
   // 检测用户环境
   const environment = await detectEnvironment()
@@ -55,7 +58,6 @@ export function installationBanner() {
 `)
 }
 
-
 export function createSetupCommand() {
   const setup = new Command('setup')
 
@@ -65,7 +67,7 @@ export function createSetupCommand() {
     .option('--manual', '显示手动安装指南')
     .option('--check', '仅检查系统要求')
     .action(async (options) => {
-      console.log("🚀 ~ .action ~ options:", options)
+      console.log('🚀 ~ .action ~ options:', options)
       // if (options.auto) {
       //   await runAutomaticSetup()
       // } else if (options.manual) {

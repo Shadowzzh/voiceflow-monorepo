@@ -1,8 +1,6 @@
 import { Command } from 'commander'
 import { createSetupCommand, runInteractiveSetup } from './commands/setup'
 
-
-
 // const program = new Command()
 
 // program
