@@ -1,16 +1,12 @@
 export function getAssetTargets(raw?: boolean) {
   const list: string[] = [
     '.changeset',
-    '.husky',
     '.vscode',
     '.editorconfig',
     '.gitattributes',
     '.gitignore',
     '.npmrc',
-    'commitlint.config.ts',
-    'eslint.config.js',
-    'lint-staged.config.js',
-    'stylelint.config.js',
+    'biome.json',
     'package.json',
     // pnpm
     'pnpm-workspace.yaml',
@@ -34,8 +30,7 @@ export function getAssetTargets(raw?: boolean) {
       'renovate.json',
       'SECURITY.md',
       'CODE_OF_CONDUCT.md',
-      'CONTRIBUTING.md',
-      'netlify.toml'
+      'CONTRIBUTING.md'
     )
   }
   return list
@@ -66,7 +61,6 @@ export function getTemplateTargets() {
     'vue-lib-template/vite.shared.config.ts',
     'vue-lib-template/vite.config.ts',
     'vue-lib-template/vitest.config.ts',
-    'vue-lib-template/eslint.config.js',
     'vue-lib-template/index.html',
     'vue-lib-template/tsconfig.app.json',
     'vue-lib-template/tsconfig.node.json',

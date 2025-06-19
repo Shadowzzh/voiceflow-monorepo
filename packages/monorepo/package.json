@@ -3,16 +3,16 @@
   "type": "module",
   "version": "1.0.4",
   "description": "icebreaker's monorepo config generator",
-  "author": "ice breaker <1324318532@qq.com>",
+  "author": "ziheng <shadow1746556951@gmail.com>",
   "license": "MIT",
   "homepage": "https://monorepo.icebreaker.top",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sonofmagic/monorepo-template.git",
+    "url": "git+https://github.com/Shadowzzh/voiceflow-monorepo.git",
     "directory": "packages/monorepo"
   },
   "bugs": {
-    "url": "https://github.com/sonofmagic/monorepo-template/issues"
+    "url": "https://github.com/Shadowzzh/voiceflow-monorepo/issues"
   },
   "keywords": [
     "monorepo",
@@ -35,8 +35,8 @@
     "test": "pnpm prepublish && vitest run",
     "test:dev": "vitest",
     "release": "pnpm publish",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "prepublish": "tsx scripts/prepublish.ts"
   },
   "publishConfig": {

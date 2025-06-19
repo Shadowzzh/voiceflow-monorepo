@@ -1,83 +1,12 @@
 {
-  // Disable the default formatter, use eslint instead
-  "prettier.enable": false,
-  "editor.formatOnSave": false,
-  // Auto fix
+  // Use Biome as the default formatter
+  "editor.defaultFormatter": "biomejs.biome",
+  "editor.formatOnSave": true,
+  // Auto fix with Biome
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
-    "source.organizeImports": "never"
+    "quickfix.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
   },
-  // Silent the stylistic rules in you IDE, but still auto fix them
-  "eslint.rules.customizations": [
-    // close "style/* off"
-    // {
-    //   "rule": "style/*",
-    //   "severity": "off"
-    // },
-    {
-      "rule": "format/*",
-      "severity": "off"
-    },
-    {
-      "rule": "*-indent",
-      "severity": "off"
-    },
-    {
-      "rule": "*-spacing",
-      "severity": "off"
-    },
-    {
-      "rule": "*-spaces",
-      "severity": "off"
-    },
-    {
-      "rule": "*-order",
-      "severity": "off"
-    },
-    {
-      "rule": "*-dangle",
-      "severity": "off"
-    },
-    {
-      "rule": "*-newline",
-      "severity": "off"
-    },
-    {
-      "rule": "*quotes",
-      "severity": "off"
-    },
-    {
-      "rule": "*semi",
-      "severity": "off"
-    }
-  ],
-  // Enable eslint for all supported languages
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact",
-    "vue",
-    "html",
-    "markdown",
-    "json",
-    "jsonc",
-    "yaml",
-    "toml",
-    "xml",
-    "gql",
-    "graphql",
-    "astro",
-    "css",
-    "less",
-    "scss",
-    "pcss",
-    "postcss"
-  ],
-  "css.validate": false,
-  "less.validate": false,
-  "scss.validate": false,
-  "stylelint.validate": ["vue", "css", "scss"],
   "terminal.integrated.env.linux": {
     "COREPACK_NPM_REGISTRY": "https://registry.npmmirror.com",
     "EDGEDRIVER_CDNURL": "https://npmmirror.com/mirrors/edgedriver",

@@ -3,16 +3,12 @@
 exports[`targets > normal 1`] = `
 [
   ".changeset",
-  ".husky",
   ".vscode",
   ".editorconfig",
   ".gitattributes",
   ".gitignore",
   ".npmrc",
-  "commitlint.config.ts",
-  "eslint.config.js",
-  "lint-staged.config.js",
-  "stylelint.config.js",
+  "biome.json",
   "package.json",
   "pnpm-workspace.yaml",
   "tsconfig.json",
@@ -26,23 +22,18 @@ exports[`targets > normal 1`] = `
   "SECURITY.md",
   "CODE_OF_CONDUCT.md",
   "CONTRIBUTING.md",
-  "netlify.toml",
 ]
 `;
 
 exports[`targets > raw 1`] = `
 [
   ".changeset",
-  ".husky",
   ".vscode",
   ".editorconfig",
   ".gitattributes",
   ".gitignore",
   ".npmrc",
-  "commitlint.config.ts",
-  "eslint.config.js",
-  "lint-staged.config.js",
-  "stylelint.config.js",
+  "biome.json",
   "package.json",
   "pnpm-workspace.yaml",
   "tsconfig.json",

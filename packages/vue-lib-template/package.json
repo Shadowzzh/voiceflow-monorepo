@@ -3,15 +3,15 @@
   "type": "module",
   "version": "0.0.0",
   "description": "vue lib vite lib mode template",
-  "author": "ice breaker <1324318532@qq.com>",
+  "author": "ziheng <shadow1746556951@gmail.com>",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sonofmagic/monorepo-template.git",
+    "url": "git+https://github.com/Shadowzzh/voiceflow-monorepo.git",
     "directory": "packages/vue-lib-template"
   },
   "bugs": {
-    "url": "https://github.com/sonofmagic/monorepo-template/issues"
+    "url": "https://github.com/Shadowzzh/voiceflow-monorepo/issues"
   },
   "keywords": [],
   "sideEffects": false,
