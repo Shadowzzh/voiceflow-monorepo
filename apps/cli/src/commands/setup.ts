@@ -3,7 +3,7 @@ import { Command } from 'commander'
 import { runAutomaticInstallation } from '@/installer/automatic'
 import {
   detectEnvironment,
-  displayEnvironmentSummary,
+  // displayEnvironmentSummary,
 } from '@/installer/environment'
 
 /**

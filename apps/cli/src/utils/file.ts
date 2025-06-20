@@ -12,8 +12,6 @@ export interface DownloadProgress {
   currentSize: number
 }
 
-
-
 /**
  * 检查文件是否存在
  * @param path 文件路径

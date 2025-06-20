@@ -27,8 +27,7 @@ interface SpawnOptions extends SpawnOptionsWithoutStdio {
  */
 export async function safeExec(
   command: string,
-  options: { cwd?: string, timeout?: number } = {},
-
+  options: { cwd?: string; timeout?: number } = {}
 ): Promise<string | null> {
   const { cwd, timeout = 10000 } = options
 

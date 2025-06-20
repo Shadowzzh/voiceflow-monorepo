@@ -1,24 +1,22 @@
+import os from 'node:os'
 import path from 'node:path'
-import chalk from 'chalk'
-import { WHISPER_CPP_INSTALL_DIR, YTDLP_INSTALL_DIR } from "@/config"
-import type { Environment } from '@/installer/environment'
-import { quickError, safeRun } from "@/utils/error"
+import { WHISPER_CPP_INSTALL_DIR, YTDLP_INSTALL_DIR } from '@/config'
+import { quickError } from '@/utils/error'
 import { safeExec } from '@/utils/exec'
-import { checkFileExists } from "@/utils/file"
-
+import { checkFileExists } from '@/utils/file'
 
 /**
  * 检查应用是否已安装
  * @param environment 环境
  * @returns 是否已安装
  */
-export async function checkAppInstalled(environment: Environment) {
-  const ytDlpExecutableName = getYtDlpExecutableName(environment)
+export async function checkAppInstalled() {
+  const ytDlpExecutableName = getYtDlpExecutableName()
   const whisperCppExecutableName = '123'
 
   // 检查 yt-dlp 和 whisper.cpp 是否已安装
   const [isYtDlpExists, isWhisperCppExists] = await Promise.all([
-    checkYtDlpInstalled(ytDlpExecutableName),
+    checkYtDlpInstalled(),
     checkWhisperCppInstalled(whisperCppExecutableName),
   ])
 
@@ -40,20 +38,29 @@ export async function checkAppInstalled(environment: Environment) {
  * @param environment 环境
  * @returns 可执行文件名
  */
-export function getYtDlpExecutableName(environment: Environment) {
+export function getYtDlpExecutableName() {
+  const platform = os.platform()
+  const arch = os.arch()
+
   // TODO 使用 platform 入参
-  switch (environment.platform) {
+  switch (platform) {
     case 'win32':
       return 'yt-dlp.exe'
     case 'darwin':
       return 'yt-dlp_macos'
     case 'linux':
-      return environment.arch === 'arm64'
-        ? 'yt-dlp_linux_aarch64'
-        : 'yt-dlp_linux'
+      return arch === 'arm64' ? 'yt-dlp_linux_aarch64' : 'yt-dlp_linux'
     default:
-      quickError(`不支持的系统平台: ${environment.platform}`, '请检查系统平台')
+      quickError(`不支持的系统平台: ${platform}`, '请检查系统平台')
   }
+}
+
+/**
+ * 获取 yt-dlp 可执行文件路径
+ * @returns 可执行文件路径
+ */
+export function getYtDlpExecutablePath() {
+  return path.join(YTDLP_INSTALL_DIR, getYtDlpExecutableName())
 }
 
 /**
@@ -62,7 +69,9 @@ export function getYtDlpExecutableName(environment: Environment) {
  * @returns yt-dlp 版本
  */
 export async function getYtDlpVersion(executableName: string) {
-  const ytdlpVersion = await safeExec(`./${executableName} --version `, { cwd: YTDLP_INSTALL_DIR })
+  const ytdlpVersion = await safeExec(`./${executableName} --version `, {
+    cwd: YTDLP_INSTALL_DIR,
+  })
   return ytdlpVersion
 }
 
@@ -71,7 +80,9 @@ export async function getYtDlpVersion(executableName: string) {
  * @param fileName 可执行文件名
  * @returns 是否已安装
  */
-export async function checkYtDlpInstalled(executableName: string, isVersionCheck: boolean = false) {
+export async function checkYtDlpInstalled(isVersionCheck: boolean = false) {
+  const executableName = getYtDlpExecutableName()
+
   const targetPath = path.join(YTDLP_INSTALL_DIR, executableName)
   const isExists = await checkFileExists(targetPath)
 
@@ -79,7 +90,6 @@ export async function checkYtDlpInstalled(executableName: string, isVersionCheck
     const version = await getYtDlpVersion(executableName)
     return version
   }
-
 
   return isExists
 }
