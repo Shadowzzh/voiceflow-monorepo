@@ -5,8 +5,8 @@ import ora from 'ora'
 import { EnvHttpProxyAgent, setGlobalDispatcher } from 'undici'
 import { YTDLP_INSTALL_DIR } from '@/config'
 import type { Environment } from '@/installer/environment'
-import { downloadFile } from '@/utils/download'
 import { quickError, quickExit, safeRun } from '@/utils/error'
+import { downloadFile, makeExecutable } from '@/utils/file'
 import { formatBytes } from '@/utils/unit'
 
 /** yt-dlp 下载地址 */
@@ -41,7 +41,8 @@ export async function runAutomaticInstallation(
   )
 
   const downloadUrl = `${YTDLP_DOWNLOAD_URL_DIR}/${executableName}`
-  const targetPath = path.join(YTDLP_INSTALL_DIR, executableName)
+  // yt-dlp 可执行文件路径
+  const ytDlpExecutablePath = path.join(YTDLP_INSTALL_DIR, executableName)
 
   spinner.text = chalk.cyan('下载 yt-dlp 中...')
 
@@ -49,7 +50,7 @@ export async function runAutomaticInstallation(
   try {
     await downloadFile(
       downloadUrl,
-      targetPath,
+      ytDlpExecutablePath,
       ({ progress, totalSize, currentSize }) => {
         spinner.text = chalk.cyan(
           `下载 yt-dlp 中... ${progress}% (${formatBytes(currentSize)}/${formatBytes(totalSize)})`
@@ -72,13 +73,9 @@ export async function runAutomaticInstallation(
     }
   }
 
-  // await safeRun(
-  //   () => downloadFile(downloadUrl, targetPath, ({ progress, totalSize, currentSize }) => {
-  //     spinner.text = chalk.cyan(`下载 yt-dlp 中... ${progress}% (${formatBytes(currentSize)}/${formatBytes(totalSize)})`)
-  //   }, abortController?.signal),
-  //   '下载失败',
-  //   '请检查网络连接或稍后重试'
-  // )
+  // 设置文件权限
+  await makeExecutable(ytDlpExecutablePath)
+
 
   spinner.succeed('yt-dlp 安装成功')
 }

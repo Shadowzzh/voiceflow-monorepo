@@ -1,4 +1,7 @@
 import { promises as fs } from 'node:fs'
+import { chmod } from 'node:fs/promises'
+import { platform } from 'node:os'
+import { safeRun } from './error'
 
 interface DownloadProgress {
   /** 进度百分比 */
@@ -7,6 +10,25 @@ interface DownloadProgress {
   totalSize: number
   /** 当前已下载大小 */
   currentSize: number
+}
+
+
+/**
+ * 设置文件权限
+ * @param filepath 文件路径
+ */
+export async function makeExecutable(filepath: string) {
+  if (platform() === 'win32') {
+    // Windows 不需要处理
+    return
+  }
+
+  // 设置文件权限
+  await safeRun(
+    () => chmod(filepath, 0o755),
+    '权限设置失败',
+    '请检查权限或使用管理员权限运行'
+  )
 }
 
 /**
