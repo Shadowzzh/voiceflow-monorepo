@@ -23,9 +23,8 @@ export class GitClient {
   async getConfig() {
     if (this.#config) {
       return this.#config
-    } else {
-      return await this.init()
     }
+    return await this.init()
   }
 
   async getGitUrl() {

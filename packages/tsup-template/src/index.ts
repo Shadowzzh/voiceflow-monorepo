@@ -7,6 +7,6 @@ export function getDirname() {
 }
 
 export enum xx {
-  id,
-  dd,
+  id = 0,
+  dd = 1,
 }

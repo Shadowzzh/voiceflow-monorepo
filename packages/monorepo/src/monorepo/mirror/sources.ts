@@ -9,7 +9,8 @@ export const chinaMirrorsEnvs = {
   PHANTOMJS_CDNURL: 'https://cdn.npmmirror.com/binaries/phantomjs',
   CHROMEDRIVER_CDNURL: 'https://cdn.npmmirror.com/binaries/chromedriver',
   OPERADRIVER_CDNURL: 'https://cdn.npmmirror.com/binaries/operadriver',
-  CYPRESS_DOWNLOAD_PATH_TEMPLATE: `https://cdn.npmmirror.com/binaries/cypress/\${version}/\${platform}-\${arch}/cypress.zip`,
+  CYPRESS_DOWNLOAD_PATH_TEMPLATE:
+    'https://cdn.npmmirror.com/binaries/cypress/\${version}/\${platform}-\${arch}/cypress.zip',
   ELECTRON_MIRROR: 'https://cdn.npmmirror.com/binaries/electron/',
   ELECTRON_BUILDER_BINARIES_MIRROR:
     'https://cdn.npmmirror.com/binaries/electron-builder-binaries/',
