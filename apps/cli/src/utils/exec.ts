@@ -27,13 +27,16 @@ interface SpawnOptions extends SpawnOptionsWithoutStdio {
  */
 export async function safeExec(
   command: string,
-  timeout = 5000
+  options: { cwd?: string, timeout?: number } = {},
+
 ): Promise<string | null> {
+  const { cwd, timeout = 10000 } = options
+
   try {
     const controller = new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), timeout)
 
-    const result = await execAsync(command, { signal: controller.signal })
+    const result = await execAsync(command, { signal: controller.signal, cwd })
     clearTimeout(timeoutId)
 
     return result.stdout.trim()

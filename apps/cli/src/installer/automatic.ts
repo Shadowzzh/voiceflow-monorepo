@@ -1,5 +1,6 @@
 import { select } from '@inquirer/prompts'
 import chalk from 'chalk'
+import ora from 'ora'
 import { checkAppInstalled } from '@/installer/checkApp'
 import type { Environment } from '@/installer/environment'
 import { executeYtDlpInstallation } from '@/installer/installationYtDlp'
@@ -26,7 +27,21 @@ async function promptInstallation(choices: { name: string, description: string, 
  * @param abortController 中断控制器
  */
 export async function runAutomaticInstallation(environment: Environment, abortController?: AbortController) {
-  const [isYtDlpExists] = await checkAppInstalled(environment)
+  const spinner = ora('正在检查应用安装情况...').start()
+  const { isYtDlpExists, ytdlpVersion, isWhisperCppExists } = await checkAppInstalled(environment)
+
+  spinner.succeed('检查完成')
+
+  console.log()
+  if (!isYtDlpExists) {
+    console.log(chalk.yellow(`未安装 yt-dlp`))
+  } else {
+    ytdlpVersion === null && console.log(chalk.yellow(`yt-dlp 版本检查失败, 请重新安装`))
+  }
+
+  !isWhisperCppExists && console.log(chalk.yellow(`未安装 whisper.cpp`))
+  console.log()
+
 
   if (!isYtDlpExists) {
 
@@ -39,6 +54,9 @@ export async function runAutomaticInstallation(environment: Environment, abortCo
     // if (!isWhisperCppExists) {
     //   choices.push(whisperCppChoice)
     // }
+
+    console.log(chalk.green('开始安装'))
+    console.log()
 
     const appName = await promptInstallation(choices)
 

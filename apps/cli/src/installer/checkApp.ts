@@ -2,7 +2,8 @@ import path from 'node:path'
 import chalk from 'chalk'
 import { WHISPER_CPP_INSTALL_DIR, YTDLP_INSTALL_DIR } from "@/config"
 import type { Environment } from '@/installer/environment'
-import { quickError } from "@/utils/error"
+import { quickError, safeRun } from "@/utils/error"
+import { safeExec } from '@/utils/exec'
 import { checkFileExists } from "@/utils/file"
 
 
@@ -15,27 +16,23 @@ export async function checkAppInstalled(environment: Environment) {
   const ytDlpExecutableName = getYtDlpExecutableName(environment)
   const whisperCppExecutableName = '123'
 
-
   // 检查 yt-dlp 和 whisper.cpp 是否已安装
   const [isYtDlpExists, isWhisperCppExists] = await Promise.all([
     checkYtDlpInstalled(ytDlpExecutableName),
-    checkWhisperCppInstalled(whisperCppExecutableName)
+    checkWhisperCppInstalled(whisperCppExecutableName),
   ])
 
-  console.log()
+  let ytdlpVersion = null
 
-  if (!isYtDlpExists) {
-    console.log(chalk.yellow(`🟡 未安装 yt-dlp`))
+  if (isYtDlpExists) {
+    ytdlpVersion = await getYtDlpVersion(ytDlpExecutableName)
   }
 
-  if (!isWhisperCppExists) {
-    console.log(chalk.yellow(`🟡 未安装 whisper.cpp`))
+  return {
+    isYtDlpExists,
+    isWhisperCppExists,
+    ytdlpVersion,
   }
-
-  console.log()
-
-
-  return [isYtDlpExists, isWhisperCppExists]
 }
 
 /**
@@ -44,6 +41,7 @@ export async function checkAppInstalled(environment: Environment) {
  * @returns 可执行文件名
  */
 export function getYtDlpExecutableName(environment: Environment) {
+  // TODO 使用 platform 入参
   switch (environment.platform) {
     case 'win32':
       return 'yt-dlp.exe'
@@ -59,13 +57,30 @@ export function getYtDlpExecutableName(environment: Environment) {
 }
 
 /**
+ * 获取 yt-dlp 版本
+ * @param environment 环境
+ * @returns yt-dlp 版本
+ */
+export async function getYtDlpVersion(executableName: string) {
+  const ytdlpVersion = await safeExec(`./${executableName} --version `, { cwd: YTDLP_INSTALL_DIR })
+  return ytdlpVersion
+}
+
+/**
  * 检查 yt-dlp 是否已安装
  * @param fileName 可执行文件名
  * @returns 是否已安装
  */
-export async function checkYtDlpInstalled(fileName: string) {
-  const targetPath = path.join(YTDLP_INSTALL_DIR, fileName)
+export async function checkYtDlpInstalled(executableName: string, isVersionCheck: boolean = false) {
+  const targetPath = path.join(YTDLP_INSTALL_DIR, executableName)
   const isExists = await checkFileExists(targetPath)
+
+  if (isVersionCheck) {
+    const version = await getYtDlpVersion(executableName)
+    return version
+  }
+
+
   return isExists
 }
 
