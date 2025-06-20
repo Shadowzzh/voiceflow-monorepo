@@ -1,3 +1,4 @@
+import crypto from 'node:crypto'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import chalk from 'chalk'
@@ -18,11 +19,13 @@ import { execCommand } from '@/utils/exec'
  * 下载 WAV 文件
  * @param url 文件 URL（支持 YouTube 等视频网站）
  * @param outputPath 输出路径（可选，默认为当前目录）
+ * @param options 下载选项
  * @returns 下载的文件路径
  */
 export async function downloadWav(
   url: string,
-  outputPath?: string
+  outputPath?: string,
+  options: DownloadOptions = {}
 ): Promise<string> {
   // 检查 yt-dlp 是否已安装并获取路径
   const isYtDlpInstalled = await checkYtDlpInstalled()
@@ -39,6 +42,15 @@ export async function downloadWav(
 
   // 确保输出目录存在
   await fs.mkdir(outputDir, { recursive: true })
+
+  // 检查是否已存在相同的文件
+  if (!options.forceRedownload) {
+    const existingFile = await checkExistingFile(url, outputDir)
+    if (existingFile) {
+      quickSuccess(`文件已存在: ${existingFile}`)
+      return existingFile
+    }
+  }
 
   // 创建进度指示器
   const spinner = ora('正在下载音频...').start()
@@ -77,7 +89,7 @@ export async function downloadWav(
     quickSuccess(`文件已保存到: ${finalFilePath}`)
     return finalFilePath
   } catch (error) {
-    spinner.fail('下载失败')
+    spinner.clear()
     handleDownloadError(error)
   }
 }
@@ -86,6 +98,8 @@ export async function downloadWav(
  * 构建 yt-dlp 命令参数
  */
 function buildYtDlpArgs(url: string, outputDir: string): string[] {
+  const urlHash = generateUrlHash(url)
+
   return [
     '-x', // 仅提取音频
     '--audio-format',
@@ -93,7 +107,8 @@ function buildYtDlpArgs(url: string, outputDir: string): string[] {
     '--audio-quality',
     '0', // 最高质量
     '-o',
-    path.join(outputDir, '%(title)s.%(ext)s'), // 输出文件名模板
+    // 在文件名中包含 URL 哈希值，用于去重
+    path.join(outputDir, `%(title)s [${urlHash}].%(ext)s`),
     '--no-playlist', // 不下载播放列表
     '--progress', // 显示进度
     url,
@@ -201,6 +216,49 @@ function createYtDlpCallbacks(
   return {
     stdoutCallback: ({ line }) => handleLine(line),
     stderrCallback: ({ line }) => handleLine(line),
+  }
+}
+
+/**
+ * 下载选项
+ */
+interface DownloadOptions {
+  /** 强制重新下载，即使文件已存在 */
+  forceRedownload?: boolean
+}
+
+/**
+ * 生成 URL 的哈希值，用于文件名去重
+ */
+function generateUrlHash(url: string): string {
+  return crypto.createHash('md5').update(url).digest('hex').substring(0, 8)
+}
+
+/**
+ * 检查是否已存在相同 URL 的下载文件
+ */
+async function checkExistingFile(url: string, outputDir: string): Promise<string | null> {
+  try {
+    // 读取目录下的所有文件
+    const files = await fs.readdir(outputDir)
+
+    // 生成 URL 的哈希值，用于文件名去重
+    const urlHash = generateUrlHash(url)
+
+    // 查找包含 URL 哈希的 WAV 文件
+    const existingFiles = files.filter(file =>
+      file.endsWith('.wav') && file.includes(`[${urlHash}]`)
+    )
+
+    // 如果找到相同 URL 的文件，返回文件路径
+    if (existingFiles.length > 0) {
+      return path.join(outputDir, existingFiles[0])
+    }
+
+    return null
+  } catch {
+    // 如果目录不存在或其他错误，返回 null
+    return null
   }
 }
 

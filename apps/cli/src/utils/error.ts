@@ -22,7 +22,7 @@ export function quickExit(message: string, suggestion?: string): never {
  */
 export function quickError(message: string, suggestion?: string): never {
   console.log()
-  console.error(chalk.red(`❌ ${message}`))
+  console.error(chalk.red(`✖ ${message}`))
   if (suggestion) {
     console.log(chalk.cyan(`💡 ${suggestion}`))
   }
@@ -36,7 +36,7 @@ export function quickError(message: string, suggestion?: string): never {
  * @param suggestion 建议
  */
 export function quickWarn(message: string, suggestion?: string): void {
-  console.log(chalk.yellow(`⚠️ ${message}`))
+  console.log(chalk.yellow(`⚠ ${message}`))
   if (suggestion) {
     console.log(chalk.gray(`提示: ${suggestion}`))
   }
@@ -47,7 +47,7 @@ export function quickWarn(message: string, suggestion?: string): void {
  * @param message 成功信息
  */
 export function quickSuccess(message: string): void {
-  console.log(chalk.green(`✅ ${message}`))
+  console.log(chalk.green(`✔ ${message}`))
 }
 
 /**

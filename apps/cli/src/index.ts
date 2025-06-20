@@ -52,15 +52,7 @@ async function main() {
     .description('从 YouTube URL 下载音频文件并转换为 WAV 格式')
     .option('-o, --output <path>', '指定输出目录（默认为当前目录）')
     .action(async (url: string, options: { output?: string }) => {
-      try {
-        await downloadWav(url, options.output)
-      } catch (error) {
-        console.error(
-          '下载失败:',
-          error instanceof Error ? error.message : String(error)
-        )
-        process.exit(1)
-      }
+      await downloadWav(url, options.output)
     })
 
   await program.parseAsync(process.argv)
