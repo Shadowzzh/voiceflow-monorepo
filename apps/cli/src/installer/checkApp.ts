@@ -85,7 +85,7 @@ export async function getYtDlpVersion(executableName: string) {
  * @param fileName 可执行文件名
  * @returns 是否已安装
  */
-export async function checkYtDlpInstalled(isVersionCheck: boolean = false) {
+export async function checkYtDlpInstalled(isVersionCheck = false) {
   const executableName = getYtDlpExecutableName()
 
   const targetPath = path.join(YTDLP_INSTALL_DIR, executableName)

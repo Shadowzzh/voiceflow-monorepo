@@ -264,9 +264,11 @@ function getGpuSuggestions(gpu: HardwareInfo['gpu']): string[] {
 
   if (gpu.cuda) {
     return ['检测到 NVIDIA GPU，建议使用 CUDA 后端以获得更好的性能']
-  } else if (gpu.metal) {
+  }
+  if (gpu.metal) {
     return ['检测到 Apple GPU，建议使用 Metal 后端以获得更好的性能']
-  } else if (gpu.opencl) {
+  }
+  if (gpu.opencl) {
     return ['检测到 OpenCL 支持，建议使用 OpenCL 后端']
   }
 
@@ -279,11 +281,11 @@ function getGpuSuggestions(gpu: HardwareInfo['gpu']): string[] {
 function getMemorySuggestions(totalMemory: number): string[] {
   if (totalMemory >= 16) {
     return ['系统内存充足，可以尝试使用更大的模型以获得更好的效果']
-  } else if (totalMemory >= 8) {
-    return ['建议使用 medium 或 small 模型以平衡性能和质量']
-  } else {
-    return ['建议使用 tiny 或 base 模型以确保流畅运行']
   }
+  if (totalMemory >= 8) {
+    return ['建议使用 medium 或 small 模型以平衡性能和质量']
+  }
+  return ['建议使用 tiny 或 base 模型以确保流畅运行']
 }
 
 /**

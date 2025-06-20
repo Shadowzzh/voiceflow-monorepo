@@ -174,7 +174,7 @@ function parseProgress(line: string): ProgressInfo | null {
   if (line.includes('[download]') && line.includes('%')) {
     const match = line.match(/(\d+\.?\d*)%/)
     if (match) {
-      return { type: 'download', percent: parseFloat(match[1]) }
+      return { type: 'download', percent: Number.parseFloat(match[1]) }
     }
   }
 

@@ -21,6 +21,7 @@ interface SpawnOptions extends SpawnOptionsWithoutStdio {
   stdoutCallback?: (args: CallbackArgs) => void
   stderrCallback?: (args: CallbackArgs) => void
   noLog?: boolean
+  abortController?: AbortController
 }
 
 /**
@@ -28,12 +29,16 @@ interface SpawnOptions extends SpawnOptionsWithoutStdio {
  */
 export async function safeExec(
   command: string,
-  options: { cwd?: string; timeout?: number } = {}
+  options: {
+    cwd?: string
+    timeout?: number
+    abortController?: AbortController
+  } = {}
 ): Promise<string | null> {
-  const { cwd, timeout = 10000 } = options
+  const { cwd, timeout = 10000, abortController } = options
 
   try {
-    const controller = new AbortController()
+    const controller = abortController || new AbortController()
     const timeoutId = setTimeout(() => controller.abort(), timeout)
 
     const result = await execAsync(command, { signal: controller.signal, cwd })
@@ -81,15 +86,32 @@ function setupProcessHandlers(
   getStdout: () => string,
   getStderr: () => string,
   resolve: (value: { stdout: string; stderr: string }) => void,
-  reject: (reason: Error) => void
+  reject: (reason: Error) => void,
+  abortController?: AbortController
 ) {
   const timer = setTimeout(() => {
     process.kill('SIGKILL')
     reject(new Error('操作超时'))
   }, timeout)
 
+  // 处理 AbortController 信号
+  const abortHandler = () => {
+    clearTimeout(timer)
+    process.kill('SIGTERM')
+    const error = new Error('操作被用户取消')
+    error.name = 'AbortError'
+    reject(error)
+  }
+
+  if (abortController) {
+    abortController.signal.addEventListener('abort', abortHandler)
+  }
+
   process.on('close', (code) => {
     clearTimeout(timer)
+    if (abortController) {
+      abortController.signal.removeEventListener('abort', abortHandler)
+    }
     if (code === 0) {
       resolve({ stdout: getStdout(), stderr: getStderr() })
     } else {
@@ -99,6 +121,9 @@ function setupProcessHandlers(
 
   process.on('error', (error) => {
     clearTimeout(timer)
+    if (abortController) {
+      abortController.signal.removeEventListener('abort', abortHandler)
+    }
     reject(error)
   })
 }
@@ -115,7 +140,12 @@ export const execCommand = (
   args: string[] = [],
   options: SpawnOptions = {}
 ) => {
-  const { timeout = 3 * 60 * 1000, stdoutCallback, stderrCallback } = options
+  const {
+    timeout = 3 * 60 * 1000,
+    stdoutCallback,
+    stderrCallback,
+    abortController,
+  } = options
 
   return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
     if (!options.noLog) {
@@ -133,6 +163,14 @@ export const execCommand = (
       stdoutCallback,
       stderrCallback
     )
-    setupProcessHandlers(process, timeout, stdout, stderr, resolve, reject)
+    setupProcessHandlers(
+      process,
+      timeout,
+      stdout,
+      stderr,
+      resolve,
+      reject,
+      abortController
+    )
   })
 }

@@ -114,15 +114,15 @@ function displayInstallationStatus(
 ) {
   console.log()
   if (!isYtDlpExists) {
-    console.log(chalk.yellow(`未安装 yt-dlp`))
+    console.log(chalk.yellow('未安装 yt-dlp'))
   } else if (ytdlpVersion === null) {
-    console.log(chalk.yellow(`yt-dlp 版本检查失败, 请重新安装`))
+    console.log(chalk.yellow('yt-dlp 版本检查失败, 请重新安装'))
   }
 
   if (!isWhisperCppExists) {
-    console.log(chalk.yellow(`未安装 whisper.cpp`))
+    console.log(chalk.yellow('未安装 whisper.cpp'))
   } else if (whisperCppVersion === null) {
-    console.log(chalk.yellow(`whisper.cpp 版本检查失败, 请重新安装`))
+    console.log(chalk.yellow('whisper.cpp 版本检查失败, 请重新安装'))
   }
   console.log()
 }

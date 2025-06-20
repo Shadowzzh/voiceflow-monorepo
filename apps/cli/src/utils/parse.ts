@@ -6,7 +6,7 @@ export function safeParseInt(
   defaultValue = 0
 ): number {
   if (!value) return defaultValue
-  const parsed = parseInt(value.trim(), 10)
+  const parsed = Number.parseInt(value.trim(), 10)
   return Number.isNaN(parsed) ? defaultValue : parsed
 }
 
@@ -18,6 +18,6 @@ export function safeParseFloat(
   defaultValue = 0
 ): number {
   if (!value) return defaultValue
-  const parsed = parseFloat(value.trim())
+  const parsed = Number.parseFloat(value.trim())
   return Number.isNaN(parsed) ? defaultValue : parsed
 }

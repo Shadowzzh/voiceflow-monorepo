@@ -46,7 +46,7 @@ export const executeWhisperInstallation = async (
     await cloneWhisperRepo(spinner, abortController)
 
     // 构建项目
-    await buildWhisperCpp(spinner)
+    await buildWhisperCpp(spinner, abortController)
 
     // 下载基础模型
     await downloadBaseModel(spinner, abortController)
@@ -133,6 +133,7 @@ async function cloneWhisperRepo(
     // 克隆新仓库
     await execCommand('git', args, {
       cwd: WHISPER_CPP_INSTALL_DIR,
+      abortController,
       stdoutCallback: ({ line }) => {
         if (
           line.includes('Receiving objects:') ||
@@ -149,8 +150,7 @@ async function cloneWhisperRepo(
           }
         }
       },
-    }
-    )
+    })
   }
 
   // 检查克隆是否成功
@@ -162,7 +162,10 @@ async function cloneWhisperRepo(
 /**
  * 构建 whisper.cpp
  */
-async function buildWhisperCpp(spinner: Ora) {
+async function buildWhisperCpp(
+  spinner: Ora,
+  abortController?: AbortController
+) {
   spinner.text = chalk.cyan('编译 whisper.cpp...')
 
   const repoPath = path.join(WHISPER_CPP_INSTALL_DIR, 'whisper.cpp')
@@ -177,7 +180,10 @@ async function buildWhisperCpp(spinner: Ora) {
 
   // 执行 CMake 配置
   spinner.text = chalk.cyan('配置构建环境...')
-  const result = await safeExec('cmake -B build', { cwd: repoPath })
+  const result = await safeExec('cmake -B build', {
+    cwd: repoPath,
+    abortController,
+  })
 
   console.log()
   console.log('执行结果：')
@@ -188,11 +194,17 @@ async function buildWhisperCpp(spinner: Ora) {
   await safeExec('cmake --build build --config Release', {
     cwd: repoPath,
     timeout: 10 * 60 * 1000, // 10分钟超时
+    abortController,
   })
 
   console.log()
   console.log('执行结果：')
   console.log(result)
+
+  // 检查是否被取消
+  if (abortController?.signal.aborted) {
+    throw new Error('AbortError')
+  }
 
   // 验证构建结果
   const buildSuccess = await checkFileExists(WHISPER_CPP_EXECUTABLE_PATH)
@@ -242,7 +254,8 @@ async function executeDownloadScript(
   platform: NodeJS.Platform,
   scriptPath: string,
   modelsPath: string,
-  spinner: Ora
+  spinner: Ora,
+  abortController?: AbortController
 ) {
   const { stdoutCallback, stderrCallback } = createDownloadCallbacks(spinner)
   const commonOptions = {
@@ -250,6 +263,7 @@ async function executeDownloadScript(
     timeout: 5 * 60 * 1000, // 5分钟超时
     stdoutCallback,
     stderrCallback,
+    abortController,
   }
 
   if (platform === 'win32') {
@@ -287,11 +301,17 @@ async function downloadBaseModel(
 
     if (platform !== 'win32') {
       // Unix 系统需要设置执行权限
-      await safeExec(`chmod +x "${scriptPath}"`)
+      await safeExec(`chmod +x "${scriptPath}"`, { abortController })
     }
 
     // 执行下载脚本
-    await executeDownloadScript(platform, scriptPath, modelsPath, spinner)
+    await executeDownloadScript(
+      platform,
+      scriptPath,
+      modelsPath,
+      spinner,
+      abortController
+    )
   }
 
   if (abortController?.signal.aborted) {

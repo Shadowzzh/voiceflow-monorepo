@@ -71,7 +71,7 @@ export async function downloadFile(
   // 从响应头中获取文件大小（Content-Length字段）
   const contentLength = response.headers.get('content-length')
   // 将字符串转换为数字，如果没有Content-Length则默认为0
-  const totalSize = contentLength ? parseInt(contentLength, 10) : 0
+  const totalSize = contentLength ? Number.parseInt(contentLength, 10) : 0
 
   // 验证文件大小是否有效
   if (totalSize === 0) {
