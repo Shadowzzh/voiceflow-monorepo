@@ -14,3 +14,6 @@ export const WHISPER_CPP_INSTALL_DIR = path.join(__dirname, './bin/whisper') // 
 /** yt-dlp 下载地址 */
 export const YTDLP_DOWNLOAD_URL_DIR =
   'https://github.com/yt-dlp/yt-dlp/releases/download/2025.06.09'
+
+/** 下载目录 */
+export const DOWNLOAD_DIR = path.join(__dirname, './downloads')

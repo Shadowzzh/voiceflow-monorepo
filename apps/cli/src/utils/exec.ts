@@ -20,6 +20,7 @@ interface CallbackArgs {
 interface SpawnOptions extends SpawnOptionsWithoutStdio {
   stdoutCallback?: (args: CallbackArgs) => void
   stderrCallback?: (args: CallbackArgs) => void
+  noLog?: boolean
 }
 
 /**
@@ -62,7 +63,9 @@ export const execCommand = (
   const { timeout = 3 * 60 * 1000, stdoutCallback, stderrCallback } = options
 
   return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
-    console.log(`执行: ${command} ${args.join(' ')}`)
+    if (!options.noLog) {
+      console.log(`执行: ${command} ${args.join(' ')}`)
+    }
 
     const process = spawn(command, args, {
       stdio: ['pipe', 'pipe', 'pipe'],

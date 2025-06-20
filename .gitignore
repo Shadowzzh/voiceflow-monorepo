@@ -36,3 +36,4 @@ dist
 vite.config.ts.timestamp-*.mjs
 
 bin/
+downloads/
