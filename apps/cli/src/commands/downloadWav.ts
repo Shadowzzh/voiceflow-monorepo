@@ -66,7 +66,9 @@ export async function downloadWav(
     // 创建进度和文件路径解析回调
     const { stdoutCallback, stderrCallback } = createYtDlpCallbacks(
       (progress) => updateProgress(spinner, progress),
-      (filePath) => { downloadedFilePath = filePath }
+      (filePath) => {
+        downloadedFilePath = filePath
+      }
     )
 
     // 执行下载命令
@@ -118,7 +120,10 @@ function buildYtDlpArgs(url: string, outputDir: string): string[] {
 /**
  * 更新进度显示
  */
-function updateProgress(spinner: ReturnType<typeof ora>, progress: ProgressInfo): void {
+function updateProgress(
+  spinner: ReturnType<typeof ora>,
+  progress: ProgressInfo
+): void {
   switch (progress.type) {
     case 'download':
       spinner.text = PROGRESS_COLOR(`下载进度: ${progress.percent}%`)
@@ -148,7 +153,7 @@ function parseFilePath(line: string): string | null {
   const patterns = [
     /\[download\] Destination: (.+)/,
     /\[ffmpeg\] Destination: (.+)/,
-    /Destination: (.+)/
+    /Destination: (.+)/,
   ]
 
   for (const pattern of patterns) {
@@ -237,7 +242,10 @@ function generateUrlHash(url: string): string {
 /**
  * 检查是否已存在相同 URL 的下载文件
  */
-async function checkExistingFile(url: string, outputDir: string): Promise<string | null> {
+async function checkExistingFile(
+  url: string,
+  outputDir: string
+): Promise<string | null> {
   try {
     // 读取目录下的所有文件
     const files = await fs.readdir(outputDir)
@@ -246,8 +254,8 @@ async function checkExistingFile(url: string, outputDir: string): Promise<string
     const urlHash = generateUrlHash(url)
 
     // 查找包含 URL 哈希的 WAV 文件
-    const existingFiles = files.filter(file =>
-      file.endsWith('.wav') && file.includes(`[${urlHash}]`)
+    const existingFiles = files.filter(
+      (file) => file.endsWith('.wav') && file.includes(`[${urlHash}]`)
     )
 
     // 如果找到相同 URL 的文件，返回文件路径
