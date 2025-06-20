@@ -3,7 +3,7 @@ import { chmod } from 'node:fs/promises'
 import { platform } from 'node:os'
 import { safeRun } from './error'
 
-interface DownloadProgress {
+export interface DownloadProgress {
   /** 进度百分比 */
   progress: number
   /** 总文件大小 */
@@ -12,6 +12,19 @@ interface DownloadProgress {
   currentSize: number
 }
 
+
+
+/**
+ * 检查文件是否存在
+ * @param path 文件路径
+ * @returns 是否存在
+ */
+export async function checkFileExists(path: string) {
+  return fs
+    .access(path)
+    .then(() => true)
+    .catch(() => false)
+}
 
 /**
  * 设置文件权限

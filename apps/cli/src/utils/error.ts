@@ -27,7 +27,7 @@ export function quickError(message: string, suggestion?: string): never {
     console.log(chalk.cyan(`💡 ${suggestion}`))
   }
   console.log()
-  process.exit(1)
+  process.exit(0)
 }
 
 /**

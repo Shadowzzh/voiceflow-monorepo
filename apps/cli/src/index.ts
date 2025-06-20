@@ -1,6 +1,11 @@
 import chalk from 'chalk'
+import { EnvHttpProxyAgent, setGlobalDispatcher } from 'undici'
 import { runInteractiveSetup } from './commands/setup'
-import { quickError, safeRun } from './utils/error'
+import { quickError } from './utils/error'
+
+// 设置全局代理
+const envHttpProxyAgent = new EnvHttpProxyAgent()
+setGlobalDispatcher(envHttpProxyAgent)
 
 // 全局错误处理
 process.on('uncaughtException', () => {
@@ -14,11 +19,7 @@ process.on('unhandledRejection', (reason) => {
 
 // 主函数
 async function main() {
-  await safeRun(
-    () => runInteractiveSetup(),
-    '设置失败',
-    '请检查系统环境和网络连接后重试'
-  )
+  runInteractiveSetup()
 }
 
 // 特殊处理用户取消

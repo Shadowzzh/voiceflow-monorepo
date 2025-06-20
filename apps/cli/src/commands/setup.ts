@@ -18,6 +18,10 @@ export async function runInteractiveSetup() {
   // 设置 Ctrl+C 信号处理
   const handleInterrupt = () => {
     abortController.abort()
+    // 给异步操作一些时间来处理中断信号
+    setTimeout(() => {
+      process.exit(0)
+    }, 100)
   }
 
   // 监听 SIGINT (Ctrl+C) 和 SIGTERM 信号
@@ -35,7 +39,9 @@ export async function runInteractiveSetup() {
     // 如果是用户主动取消，则正常退出
     if (
       error instanceof Error &&
-      (error.message.includes('取消') || error.name === 'AbortError')
+      (error.message.includes('取消') ||
+        error.name === 'AbortError' ||
+        error.name === 'ExitPromptError')
     ) {
       console.log(chalk.yellow('安装已取消'))
       process.exit(0)

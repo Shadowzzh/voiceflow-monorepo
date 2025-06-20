@@ -43,6 +43,7 @@
   },
   "publishConfig": {},
   "dependencies": {
+    "@inquirer/prompts": "^7.5.3",
     "chalk": "^5.4.1",
     "commander": "^14.0.0",
     "enquirer": "^2.4.1",
