@@ -49,6 +49,61 @@ export async function safeExec(
 }
 
 /**
+ * 设置进程数据监听器
+ */
+function setupProcessListeners(
+  process: ReturnType<typeof spawn>,
+  stdoutCallback?: (args: CallbackArgs) => void,
+  stderrCallback?: (args: CallbackArgs) => void
+) {
+  let stdout = ''
+  let stderr = ''
+
+  process.stdout?.on('data', (data) => {
+    stdout += data.toString()
+    stdoutCallback?.({ line: data.toString() })
+  })
+
+  process.stderr?.on('data', (data) => {
+    stderr += data.toString()
+    stderrCallback?.({ line: data.toString() })
+  })
+
+  return { stdout: () => stdout, stderr: () => stderr }
+}
+
+/**
+ * 设置进程超时和完成处理器
+ */
+function setupProcessHandlers(
+  process: ReturnType<typeof spawn>,
+  timeout: number,
+  getStdout: () => string,
+  getStderr: () => string,
+  resolve: (value: { stdout: string; stderr: string }) => void,
+  reject: (reason: Error) => void
+) {
+  const timer = setTimeout(() => {
+    process.kill('SIGKILL')
+    reject(new Error('操作超时'))
+  }, timeout)
+
+  process.on('close', (code) => {
+    clearTimeout(timer)
+    if (code === 0) {
+      resolve({ stdout: getStdout(), stderr: getStderr() })
+    } else {
+      reject(new Error(getStderr() || `退出码: ${code}`))
+    }
+  })
+
+  process.on('error', (error) => {
+    clearTimeout(timer)
+    reject(error)
+  })
+}
+
+/**
  * 执行命令的通用函数
  * @param command 命令
  * @param args 命令参数
@@ -64,6 +119,7 @@ export const execCommand = (
 
   return new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
     if (!options.noLog) {
+      console.log()
       console.log(`执行: ${command} ${args.join(' ')}`)
     }
 
@@ -72,36 +128,11 @@ export const execCommand = (
       ...options,
     })
 
-    let stdout = ''
-    let stderr = ''
-
-    process.stdout.on('data', (data) => {
-      stdout += data.toString()
-      stdoutCallback?.({ line: data.toString() })
-    })
-
-    process.stderr.on('data', (data) => {
-      stderr += data.toString()
-      stderrCallback?.({ line: data.toString() })
-    })
-
-    const timer = setTimeout(() => {
-      process.kill('SIGKILL')
-      reject(new Error('操作超时'))
-    }, timeout)
-
-    process.on('close', (code) => {
-      clearTimeout(timer)
-      if (code === 0) {
-        resolve({ stdout, stderr })
-      } else {
-        reject(new Error(stderr || `退出码: ${code}`))
-      }
-    })
-
-    process.on('error', (error) => {
-      clearTimeout(timer)
-      reject(error)
-    })
+    const { stdout, stderr } = setupProcessListeners(
+      process,
+      stdoutCallback,
+      stderrCallback
+    )
+    setupProcessHandlers(process, timeout, stdout, stderr, resolve, reject)
   })
 }

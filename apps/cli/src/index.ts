@@ -5,6 +5,7 @@ import { downloadWav } from '@/commands/downloadWav'
 import { runInteractiveSetup } from '@/commands/setup'
 import { displayEnvironmentSummary } from '@/installer/environment'
 import { quickError } from '@/utils/error'
+import { executeWhisperInstallation } from './installer/installationWhisper'
 
 // 设置全局代理
 const envHttpProxyAgent = new EnvHttpProxyAgent()
@@ -55,7 +56,7 @@ async function main() {
       await downloadWav(url, options.output)
     })
 
-  await program.parseAsync(process.argv)
+  await executeWhisperInstallation()
 }
 
 // 特殊处理用户取消

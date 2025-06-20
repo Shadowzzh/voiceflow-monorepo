@@ -7,7 +7,6 @@ import {
   checkYtDlpInstalled,
   getYtDlpExecutableName,
 } from '@/installer/checkApp'
-import type { Environment } from '@/installer/environment'
 import { quickError, quickExit, safeRun } from '@/utils/error'
 import {
   type DownloadProgress,
@@ -21,14 +20,13 @@ import { formatBytes } from '@/utils/unit'
  * @param environment 环境
  */
 export const executeYtDlpInstallation = async (
-  environment: Environment,
   abortController?: AbortController
 ) => {
   // 获取可执行文件名
-  const executableName = getYtDlpExecutableName(environment)
+  const executableName = getYtDlpExecutableName()
 
   // 检查是否已安装
-  const isInstalled = await checkYtDlpInstalled(executableName)
+  const isInstalled = await checkYtDlpInstalled()
   if (isInstalled) {
     return
   }

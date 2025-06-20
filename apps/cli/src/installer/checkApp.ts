@@ -1,6 +1,6 @@
 import os from 'node:os'
 import path from 'node:path'
-import { WHISPER_CPP_INSTALL_DIR, YTDLP_INSTALL_DIR } from '@/config'
+import { WHISPER_CPP_EXECUTABLE_PATH, YTDLP_INSTALL_DIR } from '@/config'
 import { quickError } from '@/utils/error'
 import { safeExec } from '@/utils/exec'
 import { checkFileExists } from '@/utils/file'
@@ -12,24 +12,29 @@ import { checkFileExists } from '@/utils/file'
  */
 export async function checkAppInstalled() {
   const ytDlpExecutableName = getYtDlpExecutableName()
-  const whisperCppExecutableName = '123'
 
   // 检查 yt-dlp 和 whisper.cpp 是否已安装
   const [isYtDlpExists, isWhisperCppExists] = await Promise.all([
     checkYtDlpInstalled(),
-    checkWhisperCppInstalled(whisperCppExecutableName),
+    checkWhisperCppInstalled(),
   ])
 
   let ytdlpVersion = null
+  let whisperCppVersion = null
 
   if (isYtDlpExists) {
     ytdlpVersion = await getYtDlpVersion(ytDlpExecutableName)
+  }
+
+  if (isWhisperCppExists) {
+    whisperCppVersion = await getWhisperCppVersion()
   }
 
   return {
     isYtDlpExists,
     isWhisperCppExists,
     ytdlpVersion,
+    whisperCppVersion,
   }
 }
 
@@ -95,12 +100,37 @@ export async function checkYtDlpInstalled(isVersionCheck: boolean = false) {
 }
 
 /**
+ * 获取 whisper.cpp 可执行文件名
+ * @returns 可执行文件名
+ */
+export function getWhisperCppExecutableName() {
+  const platform = os.platform()
+
+  switch (platform) {
+    case 'win32':
+      return 'whisper-cli.exe'
+    case 'darwin':
+    case 'linux':
+      return 'whisper-cli'
+    default:
+      quickError(`不支持的系统平台: ${platform}`, '请检查系统平台')
+  }
+}
+
+/**
+ * 获取 whisper.cpp 版本
+ * @returns whisper.cpp 版本
+ */
+export async function getWhisperCppVersion() {
+  const version = await safeExec(`"${WHISPER_CPP_EXECUTABLE_PATH}" --version`)
+  return version
+}
+
+/**
  * 检查 whisper.cpp 是否已安装
- * @param fileName 可执行文件名
  * @returns 是否已安装
  */
-export async function checkWhisperCppInstalled(fileName: string) {
-  const targetPath = path.join(WHISPER_CPP_INSTALL_DIR, fileName)
-  const isExists = await checkFileExists(targetPath)
+export async function checkWhisperCppInstalled() {
+  const isExists = await checkFileExists(WHISPER_CPP_EXECUTABLE_PATH)
   return isExists
 }
