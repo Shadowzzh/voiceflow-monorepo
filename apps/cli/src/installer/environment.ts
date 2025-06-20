@@ -41,8 +41,9 @@ export async function detectEnvironment(): Promise<Environment> {
 /**
  * 显示环境信息摘要
  */
-export function displayEnvironmentSummary(env: Environment): void {
-  const output = generateEnvironmentSummary(env)
+export async function displayEnvironmentSummary(): Promise<void> {
+  const environment = await detectEnvironment()
+  const output = generateEnvironmentSummary(environment)
   console.log(output)
 }
 

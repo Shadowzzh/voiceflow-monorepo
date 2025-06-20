@@ -31,8 +31,6 @@ export async function runInteractiveSetup() {
   try {
     // 检测用户环境
     const environment = await detectEnvironment()
-    // 显示环境信息
-    displayEnvironmentSummary(environment)
     // 运行自动安装
     await runAutomaticInstallation(environment, abortController)
   } catch (error) {
